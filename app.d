@@ -372,6 +372,34 @@ int main()
 
 	writeln(Nullable!(double).sizeof);
 	writeln(Nullable!(real).sizeof);
-	
+
+	SysTime v_start = Clock.currTime();
+	BigInt c = 0;
+	c = 2 ^ 1024;
+	for (;;)
+	{
+		string c_to_str = format("%d", c);
+		double c_to_dbl = to!double(c_to_str);
+		string d_to_str = format!`%0.0f`(c_to_dbl);
+		if (c_to_str != d_to_str)
+		{
+			writeln(c_to_str, `:`, d_to_str);
+			break;
+		}
+		SysTime v_temp = Clock.currTime();
+		if ((v_temp - v_start) >= dur!`seconds`(5))
+		{
+			v_start = v_temp;
+			string hex = c.toHex;
+			while (hex.length < 16)
+			{
+				hex = `0` ~ hex;
+			}
+			writeln(c, ` `, format!`0x%s`(hex));
+		}
+		c++;
+	}
+	writeln(`c=`, c);
+
 	return 0;
 }
