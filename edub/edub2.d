@@ -136,7 +136,7 @@ private string make_abs_path(string path)
 			File f_read = File(abs_path, "rb");
 			scope (exit)
 				f_read.close();
-			ubyte[] bytes_read = f_read.rawRead(new ubyte[cast(size_t)f_read.size]);
+			ubyte[] bytes_read = f_read.rawRead(new ubyte[cast(size_t) f_read.size]);
 			//ubyte[] bytes_read = cast(ubyte[]) read(abs_path);
 			up_to_date = (bytes == bytes_read);
 			//f_read.close();
@@ -275,7 +275,7 @@ private string my_json_pprint(ref JSONValue jsonObj)
 		"name" : 1, "description " : 2, "homepage" : 3, "authors" : 4, "copyright"
 		: 5, "license" : 6, "targetName" : 7, "targetType" : 8, "targetPath" : 9,
 		"workingDirectory" : 10, "dependencies" : 11, "subConfigurations" : 12, "versions" : 13, "debugVersions" : 14,
-		"importPaths" : 15, "stringImportPaths" : 16, "sourcePaths" : 17, "mainSourceFile" : 18, "sourceFiles" : 19,
+		"stringImportPaths" : 15, "importPaths" : 16, "sourcePaths" : 17, "mainSourceFile" : 18, "sourceFiles" : 19,
 		"excludedSourceFiles" : 20, "libs" : 21, "subPackages" : 0, "configurations" : 0, "buildTypes" : 0,
 		"ddoxFilterArgs" : 0, "systemDependencies" : 0, "buildRequirements" : 0,
 		"buildOptions" : 0, "copyFiles" : 0, "preGenerateCommands"
@@ -561,10 +561,10 @@ DATA PRELOAD MULTIPLE
 		jsonObj["mainSourceFile"] = main_source;
 	if (source_files)
 		jsonObj["sourceFiles"] = source_files;
-	if (source_dirs)
-		jsonObj["sourcePaths"] = source_dirs;
-	if (include_dirs)
-		jsonObj["importPaths"] = include_dirs;
+	//if (source_dirs)
+	jsonObj["sourcePaths"] = source_dirs;
+	//if (include_dirs)
+	jsonObj["importPaths"] = include_dirs;
 	if (data_dirs)
 		jsonObj["stringImportPaths"] = data_dirs;
 	if (libs)
