@@ -366,6 +366,12 @@ int main()
 	writefln(`0x%08x`, dchar.max);
 
 	alias ndchar = Nullable!(dchar, cast(dchar) 0xffffffff);
+	alias ndchar2 = Nullable!(dchar, cast(dchar)-1);
 
+	assert(cast(dchar) 0xffffffff == cast(dchar)-1);
+
+	writeln(Nullable!(double).sizeof);
+	writeln(Nullable!(real).sizeof);
+	
 	return 0;
 }
