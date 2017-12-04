@@ -271,17 +271,19 @@ void rewite_dub_json(JSONValue* jsonObj, ref JSONValue*[] path_array_list, strin
 
 private string my_json_pprint(ref JSONValue jsonObj)
 {
+	// dfmt off
 	int[string] dict = [
-		"name" : 1, "description " : 2, "homepage" : 3, "authors" : 4, "copyright"
-		: 5, "license" : 6, "targetName" : 7, "targetType" : 8, "targetPath" : 9,
-		"workingDirectory" : 10, "dependencies" : 11, "subConfigurations" : 12, "versions" : 13, "debugVersions" : 14,
-		"stringImportPaths" : 15, "importPaths" : 16, "sourcePaths" : 17, "mainSourceFile" : 18, "sourceFiles" : 19,
-		"excludedSourceFiles" : 20, "libs" : 21, "subPackages" : 0, "configurations" : 0, "buildTypes" : 0,
-		"ddoxFilterArgs" : 0, "systemDependencies" : 0, "buildRequirements" : 0,
-		"buildOptions" : 0, "copyFiles" : 0, "preGenerateCommands"
-		: 0, "postGenerateCommands" : 0, "preBuildCommands" : 0,
+		"name" : 1, "description " : 2, "homepage" : 3, "authors" : 4, "copyright": 5,
+		"license" : 6, "targetName" : 7, "targetType" : 8, "targetPath" : 9,
+		"workingDirectory" : 10, "dependencies" : 11, "subConfigurations" : 12, "versions" : 13,
+		"debugVersions" : 14, "stringImportPaths" : 15, "importPaths" : 16, "sourcePaths" : 17,
+		"mainSourceFile" : 18, "sourceFiles" : 19, "excludedSourceFiles" : 20, "libs" : 21,
+		"subPackages" : 0, "configurations" : 0, "buildTypes" : 0, "ddoxFilterArgs" : 0,
+		"systemDependencies" : 0, "buildRequirements" : 0, "buildOptions" : 0, "copyFiles" : 0,
+		"preGenerateCommands" : 0, "postGenerateCommands" : 0, "preBuildCommands" : 0,
 		"postBuildCommands" : 0, "dflags" : 0, "lflags" : 0
 	];
+	// dfmt on
 	void my_json_pprint_helper(JSONValue* jsonObj, string uuid)
 	{
 		// https://code.dlang.org/package-format?lang=json

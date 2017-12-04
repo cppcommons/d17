@@ -1,10 +1,1 @@
-*.dll
-*.exe
-*.lib
-*.dll.bin
-*.exe.bin
-*.lib.bin
-*.dll.json
-*.exe.json
-*.lib.json
 /arsd
