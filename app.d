@@ -22,6 +22,7 @@ import std.datetime;
 import std.datetime.systime;
 import std.file;
 import std.format;
+import std.math;
 import std.numeric;
 import std.typecons;
 import std.variant;
@@ -373,33 +374,69 @@ int main()
 	writeln(Nullable!(double).sizeof);
 	writeln(Nullable!(real).sizeof);
 
-	SysTime v_start = Clock.currTime();
-	BigInt c = 0;
-	c = 2 ^ 1024;
-	for (;;)
+	bool is_ok_helper(BigInt n)
 	{
-		string c_to_str = format("%d", c);
+		string c_to_str = format("%d", n);
 		double c_to_dbl = to!double(c_to_str);
 		string d_to_str = format!`%0.0f`(c_to_dbl);
-		if (c_to_str != d_to_str)
+		return (c_to_str == d_to_str);
+	}
+
+	bool is_ok(BigInt n)
+	{
+		if (!is_ok_helper(n))
+			return false;
+		for (size_t i = 1; i <= 10; i++)
 		{
-			writeln(c_to_str, `:`, d_to_str);
+			if ((n - i) <= 0)
+				break;
+			writeln(`i=`, i, ` n=`, n);
+			writeln(i, ` `, n - i);
+			if (!is_ok(n - i))
+				return false;
+		}
+		writeln();
+		return true;
+	}
+
+	SysTime v_start = Clock.currTime();
+	BigInt range_min = 0;
+	BigInt range_max = 1;
+	//range_max = pow(range_max, 128);
+	range_max <<= 128;
+	for (;;)
+	{
+		writeln(`[RANGE] `, range_min, `=`, is_ok(range_min), `==>`, range_max,
+				`=`, is_ok(range_max));
+		if (is_ok(range_max))
+		{
+			writeln(`range_max is ok: `, range_max, ` `, range_max.toHex);
 			break;
 		}
-		SysTime v_temp = Clock.currTime();
-		if ((v_temp - v_start) >= dur!`seconds`(5))
+		BigInt range_mid = (range_min + range_max) / 2;
+		writeln(`range_mid=`, range_mid);
+		if (range_mid == range_min)
 		{
-			v_start = v_temp;
-			string hex = c.toHex;
-			while (hex.length < 16)
-			{
-				hex = `0` ~ hex;
-			}
-			writeln(c, ` `, format!`0x%s`(hex));
+			writeln(`1`);
+			range_max -= 1;
 		}
-		c++;
+		else if (range_mid == range_max)
+		{
+			writeln(`2`);
+			range_max -= 1;
+		}
+		else if (is_ok(range_mid))
+		{
+			writeln(`3`);
+			range_min = range_mid;
+		}
+		else
+		{
+			writeln(`4`);
+			range_max = range_mid;
+		}
+		writeln(`5`);
 	}
-	writeln(`c=`, c);
 
 	return 0;
 }
