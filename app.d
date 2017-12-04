@@ -1,5 +1,6 @@
 import my_common;
 import vibe.data.json;
+
 import std.array;
 import std.conv;
 import std.net.curl;
@@ -15,12 +16,15 @@ import std.algorithm.mutation;
 import std.algorithm.sorting;
 import std.algorithm.setops;
 import std.array;
+import std.bigint;
 import std.conv;
 import std.datetime;
 import std.datetime.systime;
 import std.file;
 import std.format;
+import std.numeric;
 import std.typecons;
+import std.variant;
 
 private void exit(int code)
 {
@@ -234,15 +238,23 @@ class C_GitHubApi
 class CommandExitException : Exception
 {
 	int code;
-    this(string msg, int code, string file = __FILE__, size_t line = __LINE__) {
-        super(msg, file, line);
+	this(string msg, int code, string file = __FILE__, size_t line = __LINE__)
+	{
+		super(msg, file, line);
 		this.code = code;
-    }
+	}
 }
 
 void sub()
 {
 	throw new CommandExitException("test exit", 1234);
+}
+
+alias nint = Nullable!(int, int.min);
+alias nint2 = Nullable!(int);
+pragma(inline) int getDefault(nint x, int d)
+{
+	return x.isNull ? d : x.get;
 }
 
 int main()
@@ -256,7 +268,6 @@ int main()
 	scope (success)
 		writeln("test @", __FILE__, ":", __LINE__, " succeeded.");
 
-	alias nint = Nullable!(int, int.min);
 	nint i0 = int.min;
 	assert(i0.isNull);
 	i0 = 1234;
@@ -301,13 +312,60 @@ int main()
 	Duration v_dur_0 = Clock.currTime() - v_time_0;
 	writeln(`v_dur_0=`, v_dur_0);
 	+/
-	try{
+	try
+	{
 		sub();
 	}
-	catch(CommandExitException ex)
+	catch (CommandExitException ex)
 	{
 		writeln(ex.code, ` `, ex.message, ` `, ex.file, ` `, ex.line);
 	}
+	Variant a = i0;
+	writeln(a.convertsTo!(int));
+	writeln(a.convertsTo!(nint));
+	nint x = a.get!nint;
+	writeln(x);
+	//int y = x.get(int.min);
+	//int y = x.get();
+	int y = x.isNull ? int.min : x.get;
+	writeln(y);
+
+	int p = x.getDefault(-1234);
+	writeln(`p=`, p);
+
+	alias nbigint = Nullable!(BigInt);
+	nbigint z = nbigint.init;
+	writeln(`z=`, z);
+
+	nint aa;
+	writeln(`aa=`, aa);
+
+	//CustomFloat!(26, 5) cf;
+	//CustomFloat!(58, 5) cf;
+	CustomFloat!(80) cf;
+	real rf;
+
+	//DoubleDouble ddf = 1234.5;
+	string s = "abc漢字";
+	wstring ws = to!wstring(s);
+	writeln(ws, ws.length);
+	dstring ds = to!dstring(ws);
+	writeln(ds, ds.length);
+
+	writeln(nint.sizeof);
+	writeln(nint2.sizeof);
+
+	nint[2] vec1;
+	nint2[2] vec2;
+
+	writeln(vec1.sizeof);
+	writeln(vec2.sizeof);
+
+	writeln(Nullable!(wchar).sizeof);
+
+	writefln(`0x%08x`, dchar.max);
+
+	alias ndchar = Nullable!(dchar, cast(dchar) 0xffffffff);
 
 	return 0;
 }
