@@ -376,23 +376,53 @@ int main()
 
 	bool is_ok_helper(BigInt n)
 	{
-		string c_to_str = format("%d", n);
-		double c_to_dbl = to!double(c_to_str);
-		string d_to_str = format!`%0.0f`(c_to_dbl);
-		return (c_to_str == d_to_str);
+		string c_str = format("%d", n);
+		ulong c_ul;
+		try
+		{
+			c_ul = to!ulong(c_str);
+		}
+		catch (std.conv.ConvOverflowException ex)
+		{
+			return false;
+		}
+		double c_real = to!double(c_ul);
+		return to!ulong(c_real) == c_ul;
 	}
+	// range_max is ok: 9007199254740992 200000_00000000
+
+	/+
+	bool is_ok_helper(BigInt n)
+	{
+		string c_str = format("%d", n);
+		ulong c_ul;
+		try
+		{
+			c_ul = to!ulong(c_str);
+		}
+		catch (std.conv.ConvOverflowException ex)
+		{
+			return false;
+		}
+		real c_real = to!real(c_ul);
+		return to!ulong(c_real) == c_ul;
+	}
+	//range_max is ok: 18446744073709551615 FFFFFFFF_FFFFFFFF
+	+/
 
 	bool is_ok(BigInt n)
 	{
 		if (!is_ok_helper(n))
 			return false;
+		BigInt p = n;
 		for (size_t i = 1; i <= 10; i++)
 		{
-			if ((n - i) <= 0)
+			p = n;
+			if ((p - i) <= 0)
 				break;
-			writeln(`i=`, i, ` n=`, n);
-			writeln(i, ` `, n - i);
-			if (!is_ok(n - i))
+			writeln(`i=`, i, ` p=`, p);
+			writeln(i, ` `, p - i);
+			if (!is_ok_helper(p - i))
 				return false;
 		}
 		writeln();
@@ -437,6 +467,8 @@ int main()
 		}
 		writeln(`5`);
 	}
+
+	//cent my_cent;
 
 	return 0;
 }
