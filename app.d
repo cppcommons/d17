@@ -371,8 +371,6 @@ int main()
 
 	assert(cast(dchar) 0xffffffff == cast(dchar)-1);
 
-	writeln(Nullable!(double).sizeof);
-	writeln(Nullable!(real).sizeof);
 
 	bool is_ok_helper(BigInt n)
 	{
@@ -469,6 +467,10 @@ int main()
 	}
 
 	//cent my_cent;
+	writeln(Nullable!(double).sizeof);
+	writeln(Nullable!(real).sizeof);
+	writeln(BigInt.sizeof);
+	writeln(Nullable!(BigInt).sizeof);
 
 	return 0;
 }
