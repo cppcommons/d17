@@ -371,7 +371,6 @@ int main()
 
 	assert(cast(dchar) 0xffffffff == cast(dchar)-1);
 
-
 	bool is_ok_helper(BigInt n)
 	{
 		string c_str = format("%d", n);
@@ -471,6 +470,56 @@ int main()
 	writeln(Nullable!(real).sizeof);
 	writeln(BigInt.sizeof);
 	writeln(Nullable!(BigInt).sizeof);
+	writeln(Nullable!(Variant).sizeof);
+
+	class A
+	{
+		int f_a;
+	}
+
+	alias myvariant1 = Algebraic!(int, long, double, real, string, A, int[int], BigInt, ubyte[]);
+	alias myvariant2 = Algebraic!(int, long, double /*, real*/ );
+	writeln(myvariant1.sizeof);
+	writeln(myvariant2.sizeof);
+
+	for (Variant lc = BigInt("0"); lc < BigInt(5); lc += BigInt(1))
+	{
+		writeln(lc);
+		lc.get!BigInt += 1;
+	}
+
+	void myappend(ref Variant v, string str)
+	{
+		if (!v.hasValue())
+		{
+			//v = `<null>`;
+			v = ``;
+		}
+		else if (!v.convertsTo!(string))
+		{
+			v = v.toString();
+		}
+		v ~= str;
+		/+
+		v.tryVisit!((string x) { v ~= str; }, () {
+			if (v.hasValue)
+				v = v.toString;
+			else
+				v = `<null>`;
+			v ~= str;
+		})();
+		+/
+	}
+
+	Variant vstr = "abc";
+	//vstr ~= "xyz";
+	myappend(vstr, "xyz");
+	writeln(vstr);
+	Variant vstr2;
+	myappend(vstr2, "xyz");
+	writeln(vstr2);
+	Variant vstr3 = cast(string) null;
+	writeln(vstr3.convertsTo!(string));
 
 	return 0;
 }
