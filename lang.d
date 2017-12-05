@@ -1,4 +1,12 @@
 import pegged.grammar; // https://github.com/PhilippeSigaud/Pegged/wiki
+import dparser; //import pegged.examples.dgrammar; mixin(grammar(Dgrammar));
+
+private void exit(int code)
+{
+	import std.c.stdlib;
+
+	std.c.stdlib.exit(code);
+}
 
 string pkgs = `
 /*before*/
@@ -97,62 +105,9 @@ private ParseTree[] find_named_children(ref ParseTree p, string def_type)
 	return result;
 }
 
-/+
-private void gen_cpp_code(string module_prefix, ref ParseTree p)
+private void cut_unnecessary_nodes(ref ParseTree p, string[] names = null)
 {
-    import std.stdio : writefln, writeln;
-    import std.string : split;
-
-    writeln(p.name);
-    writeln(p.name.split(".")[1]);
-    string def_type = p.get_def_type();
-    switch (def_type)
-    {
-    case "HandleDef":
-        writefln("!struct %s%s;", module_prefix, p.children[0].matches[0]);
-        break;
-    case "Function":
-        writeln("!function");
-        ParseTree[] names = find_named_children(p, "Name");
-        writeln("!names=", names);
-        assert(names.length == 1);
-        writeln("!function.name=", names[0].matches[0]);
-        ParseTree[] params = find_named_children(p, "Parameter");
-        writeln("!params=", params);
-        foreach (ref param; params)
-        {
-            auto param_type = param.children[1];
-            string param_type_label = param_type.get_def_type();
-            writeln("!param_type_label=", param_type_label);
-            switch (param_type_label)
-            {
-            case "PointerType":
-                writefln("!PointerType: %s*", param_type.children[0].matches[0]);
-                break;
-            default:
-                break;
-            }
-        }
-        break;
-    default:
-        writefln("%s is not supported!", def_type);
-        //break;
-        assert(0);
-    }
-
-}
-+/
-
-/+
-void test(out int a)
-{
-    a = 123;
-}
-+/
-
-private void cut_unnecessary_nodes(ref ParseTree p, ref string[] names)
-{
-	import std.algorithm :  /*+canFind,*/ startsWith;
+	import std.algorithm : canFind, startsWith;
 	import std.stdio : writeln;
 	import std.string : indexOf;
 
@@ -166,7 +121,18 @@ private void cut_unnecessary_nodes(ref ParseTree p, ref string[] names)
 		ParseTree[] new_children;
 		foreach (ref child; p.children)
 		{
-			if (child.name.indexOf("._") == -1 /*!names.canFind(child.name)*/ )
+			if (names !is null && names.canFind(child.name))
+			{
+			}
+			else if (child.name.startsWith(`and!`) || child.name.startsWith(`literal!`)
+					|| child.name.startsWith(`oneOrMore!`) || child.name.startsWith(`option!`)
+					|| child.name.startsWith(`or!`)
+					|| child.name.startsWith(`zeroOrMore!`))
+			{
+				//writeln(`exit@`, __LINE__, child.name);
+				//exit(1);
+			}
+			else if (child.name.indexOf("._") == -1 /*!names.canFind(child.name)*/ )
 			{
 				new_children ~= child;
 				continue;
@@ -187,10 +153,32 @@ private void cut_unnecessary_nodes(ref ParseTree p, ref string[] names)
 	}
 }
 
+string src = `
+module dummy_mod;
+
+int add2(int a, int b);
+`;
+
 void main(string[] args)
 {
 	import std.stdio;
 	import std.array : join;
+
+	version (none)
+	{
+		import dgrammar;
+
+		asModule("dparser", "temp_dparser", Dgrammar);
+		exit(0);
+	}
+
+	GenericD!(ParseTree) D;
+
+	auto mod = D.D.Module(src);
+	cut_unnecessary_nodes(mod, [`D.DeclDefs`, `D.DeclDef`, `D.Declaration`]);
+	writeln(mod);
+	writeln(mod.children[0].name);
+	exit(0);
 
 	foreach (arg; args)
 	{
@@ -198,18 +186,8 @@ void main(string[] args)
 	}
 
 	{
-		//import core.stdc.stdlib: getenv;
-		import std.process : environment;
 		import std.string : strip;
 
-		//string pkgs = environment.get("MSYS2_PKGS");
-		//string pkgs = "abc,xyz";
-
-		/+
-        int v = 11;
-        test(v);
-		writeln("v=", v);
-		+/
 		writefln("pkgs.length=%d", pkgs.length);
 		writefln("pkgs=%s", pkgs);
 		if (strip(pkgs) == "")
@@ -225,7 +203,7 @@ void main(string[] args)
 		//"EasyIDL.ParameterList", "EasyIDL.FunctionHead", "EasyIDL.ProcedureHead", "EasyIDL.Type"
 		];
 		/*p =*/
-		cut_unnecessary_nodes(p, unnecessary);
+		cut_unnecessary_nodes(p);
 		writeln("(2)", p.name);
 		writeln("(3)", p.children[0].name);
 		writeln(p);
@@ -255,6 +233,8 @@ void main(string[] args)
 		}
 	}
 
+	//import pegged.examples.dgrammar;
+	//asModule("dparser", "temp_dparser", Dgrammar);
 	writeln("kanji=漢字");
 }
 
