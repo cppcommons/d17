@@ -105,11 +105,16 @@ private ParseTree[] find_named_children(ref ParseTree p, string def_type)
 	return result;
 }
 
-private void cut_unnecessary_nodes(ref ParseTree p, string[] names = null)
+private void cut_unnecessary_nodes(ref ParseTree p, string[] names = null, string[] names2 = null)
 {
 	import std.algorithm : canFind, startsWith;
 	import std.stdio : writeln;
 	import std.string : indexOf;
+
+	if (names2 !is null && names2.canFind(p.name))
+	{
+		p.matches.length = 0;
+	}
 
 	if (p.children.length == 0)
 		return;
@@ -127,16 +132,6 @@ private void cut_unnecessary_nodes(ref ParseTree p, string[] names = null)
 			else if (child.name.canFind('!'))
 			{
 			}
-			/+
-			else if (child.name.startsWith(`and!`) || child.name.startsWith(`literal!`)
-					|| child.name.startsWith(`oneOrMore!`) || child.name.startsWith(`option!`)
-					|| child.name.startsWith(`or!`)
-					|| child.name.startsWith(`zeroOrMore!`))
-			{
-				//writeln(`exit@`, __LINE__, child.name);
-				//exit(1);
-			}
-			+/
 			else if (child.name.indexOf("._") == -1 /*!names.canFind(child.name)*/ )
 			{
 				new_children ~= child;
@@ -154,7 +149,7 @@ private void cut_unnecessary_nodes(ref ParseTree p, string[] names = null)
 	}
 	foreach (ref child; p.children)
 	{
-		cut_unnecessary_nodes(child, names);
+		cut_unnecessary_nodes(child, names, names2);
 	}
 }
 
@@ -228,7 +223,7 @@ void main(string[] args)
 	//cut_unnecessary_nodes(mod, [`D.DeclDefs`, `D.DeclDef`, `D.Declaration`,
 	//		`D.BasicTypeX`, `D.Type`, `D.Declarators`]);
 	auto mod = Lang1(src);
-	cut_unnecessary_nodes(mod);
+	cut_unnecessary_nodes(mod, null, [`Lang1`, `Lang1.StatementBlock`]);
 	writeln(mod);
 	//writeln(mod.children[0].name);
 	exit(0);
