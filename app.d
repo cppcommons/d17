@@ -804,6 +804,7 @@ int main()
 	NVariant[] nvary;
 	Variant v5 = nvary;
 	writeln(v5.type == typeid(NVariant[]));
+	writeln(NVariant.sizeof);
 
 	return 0;
 }
