@@ -166,8 +166,8 @@ Lang1:
     VarAssign       < Ident "=" DecimalInteger
     VarStatement    < VarKeyword VarAssign ";"
     LetKeyword      < "let"
-    LetStatement    < LetKeyword VarAssign ";"
-    StatementBlock  < "{" LetStatement* (Statement / StatementBlock)* "}"
+    LetDecl         < LetKeyword VarAssign ";"
+    StatementBlock  < "{" LetDecl* (Statement / StatementBlock)* "}"
     Statement       < VarStatement / "print" Ident ";"
     DecimalInteger  <- Integer IntegerSuffix?
     Integer         <- digit (digit/"_")*
