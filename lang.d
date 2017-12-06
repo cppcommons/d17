@@ -124,6 +124,10 @@ private void cut_unnecessary_nodes(ref ParseTree p, string[] names = null)
 			if (names !is null && names.canFind(child.name))
 			{
 			}
+			else if (child.name.canFind('!'))
+			{
+			}
+			/+
 			else if (child.name.startsWith(`and!`) || child.name.startsWith(`literal!`)
 					|| child.name.startsWith(`oneOrMore!`) || child.name.startsWith(`option!`)
 					|| child.name.startsWith(`or!`)
@@ -132,6 +136,7 @@ private void cut_unnecessary_nodes(ref ParseTree p, string[] names = null)
 				//writeln(`exit@`, __LINE__, child.name);
 				//exit(1);
 			}
+			+/
 			else if (child.name.indexOf("._") == -1 /*!names.canFind(child.name)*/ )
 			{
 				new_children ~= child;
@@ -153,10 +158,56 @@ private void cut_unnecessary_nodes(ref ParseTree p, string[] names = null)
 	}
 }
 
-string src = `
-module dummy_mod;
+mixin(grammar(`
+Lang1:
+    _TopLevel       < (_Def+ "[eof]"i) / (_Def+ eoi)
+    Keywords        < VarKeyword / LetKeyword / FunctionHead / ProcedureHead / Direction / _Type
+    VarKeyword      < "var"
+    VarAssign       < Ident "=" DecimalInteger
+    VarStatement    < VarKeyword VarAssign ";"
+    LetKeyword      < "let"
+    LetStatement    < LetKeyword VarAssign ";"
+    StatementBlock  < "{" LetStatement* (Statement / StatementBlock)* "}"
+    Statement       < VarStatement / "print" Ident ";"
+    DecimalInteger  <- Integer IntegerSuffix?
+    Integer         <- digit (digit/"_")*
+    IntegerSuffix   <- "Lu" / "LU" / "uL" / "UL"
+                     / "L" / "u" / "U"
+    _Def            < Statement / StatementBlock / _Prototype / EasyDoc
+    Ident           < (!Keywords identifier)
+    _Prototype      < Function / Procedure
+    Function        < ;FunctionHead Name Parameters ":"? ReturnValue ";"
+    FunctionHead    < ("function" / "func")
+    Procedure       < ;ProcedureHead Name Parameters ";"
+    ProcedureHead   < ("procedure" / "proc")
+    ReturnValue     < _Type
+    Parameters      < "(" _ParameterList? ")"
+    _ParameterList  < VarArgs / JsonType / MsgpackType / Parameter (',' Parameter)*
+    Parameter       < Name ":"? _Type Direction?
+    Name            < identifier
+    VarArgs         < "..."
+    JsonType        < "json"
+    MsgpackType     < "msgpack"
+    Direction       < "in" / "out" / "dual"
+    _Type           < Primitive / ManagedType / MsgpackType / JsonType / HandleType
+    Primitive       < ("int32" / "int64" / "byte" / "char" / "wchar" / "real32" / "real64") PointerMark?
+    PointerMark     < "*"
+    ManagedType     < "mbstring" / "ansistring" / "ucstring8" / "ucstring16" / "ucstring32" / "array8" / "array16" / "array32" / "array64" / "object" / "service"
+    HandleType      < :"handle" identifier
+    EasyDoc         <~ (:"/+" (!"+/" .)* :"+/") / (:"[doc]"i (!"[/doc]"i .)* :"[/doc]"i)
+    Comment1        <~ "/*" (!"*/" .)* "*/"
+    Comment2        <~ "//" (!endOfLine .)* :endOfLine
+    Spacing         <- (blank / Comment1 / Comment2)*
+`));
 
-int add2(int a, int b);
+string src = `
+var x = 1;
+{ let x = 2; let y = 3;
+  print x;
+  print y;
+}
+print x;
+print y;
 `;
 
 void main(string[] args)
@@ -172,12 +223,14 @@ void main(string[] args)
 		exit(0);
 	}
 
-	GenericD!(ParseTree) D;
-
-	auto mod = D.D.Module(src);
-	cut_unnecessary_nodes(mod, [`D.DeclDefs`, `D.DeclDef`, `D.Declaration`]);
+	//GenericD!(ParseTree) D;
+	//auto mod = D.D.Module(src);
+	//cut_unnecessary_nodes(mod, [`D.DeclDefs`, `D.DeclDef`, `D.Declaration`,
+	//		`D.BasicTypeX`, `D.Type`, `D.Declarators`]);
+	auto mod = Lang1(src);
+	cut_unnecessary_nodes(mod);
 	writeln(mod);
-	writeln(mod.children[0].name);
+	//writeln(mod.children[0].name);
 	exit(0);
 
 	foreach (arg; args)
