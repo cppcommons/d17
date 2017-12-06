@@ -114,6 +114,8 @@ private void cut_unnecessary_nodes(ref ParseTree p, string[] names = null, strin
 	if (names2 !is null && names2.canFind(p.name))
 	{
 		p.matches.length = 0;
+		//p.matches = [`...`];
+		//p.matches = null;
 	}
 
 	if (p.children.length == 0)
