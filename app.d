@@ -656,13 +656,6 @@ int main()
 					case Value.Type.floating:
 						writeln(`[floating]`, obj.as!(real));
 						break;
-					//case cast(Value.Type) 0xd4:
-					/+
-					case Value.Type.ext:
-						writeln(`[ext]`);
-						writeln(`[ext]`, obj.as!(real));
-						break;
-					+/
 					case Value.Type.raw:
 						writeln(`[raw]`, obj.as!(string));
 						break;
@@ -671,6 +664,70 @@ int main()
 						throw new Exception("Unknown type");
 					}
 				}
+			}
+			else
+			{
+				/+
+				if (unpacked.type == Value.Type.boolean)
+					writeln(unpacked.as!(bool));
+				else
+					writeln("Message: ", unpacked.as!(string));
+				+/
+			}
+		}
+		writeln(sw.peek());
+	}
+
+	{
+		std.datetime.stopwatch.StopWatch sw;
+		sw.start();
+		Packer pk;
+		pk.beginMap(2);
+		pk.pack("A", 123);
+		pk.pack("B", cast(real)123);
+		writeln(pk);
+		auto unpacker = StreamingUnpacker(pk.stream.data);
+		foreach (unpacked; unpacker)
+		{
+			if (unpacked.type == Value.Type.map)
+			{
+				writeln(`[map]`);
+				auto mp = unpacked.via.map;
+				auto keys = mp.keys;
+				writeln(keys);
+				writeln(keys.length);
+				foreach(key; keys)
+				{
+					writeln(key.as!(string));
+					auto val = mp[key];
+					writeln(val);
+				}
+				/+
+				foreach (obj; unpacked)
+				{
+					switch (obj.type)
+					{
+					case Value.Type.boolean:
+						writeln(`[boolean]`, obj.as!(bool));
+						break;
+					case Value.Type.signed:
+						writeln(`[signed]`, obj.as!(long));
+						break;
+					case Value.Type.unsigned:
+						writeln(`[unsigned]`, obj.as!(ulong));
+						break;
+					case Value.Type.floating:
+						writeln(`[floating]`, obj.as!(real));
+						break;
+					case Value.Type.raw:
+						writeln(`[raw]`, obj.as!(string));
+						break;
+					default:
+						writeln(obj.type);
+						throw new Exception("Unknown type");
+					}
+				}
+				+/
 			}
 			else
 			{
