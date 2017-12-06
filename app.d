@@ -748,18 +748,24 @@ int main()
 		writeln(sw.peek());
 	}
 
-	/+
-	Trans t;
-	t.tbl["abc"] = new C(7777);
-	writeln(t);
+	Variant[Variant] vmap;
+	vmap[Variant(1234)] = 5678;
+	vmap[Variant("abc")] = "tttt";
+	writeln(vmap);
+	writeln(vmap[Variant(1234)]);
+	writeln(vmap[Variant("abc")]);
 
-	// serialize data
-	ubyte[] inData2 = pack(t);
+	Variant v1 = cast(real)7777;
+	writeln(v1.convertsTo!(double));
+	writeln(v1.convertsTo!(real));
+	writeln(v1.type);
+	writeln(v1.type == typeid(real));
 
-	// unserialize the data
-	Trans t2 = inData2.unpack!Trans();
-	writeln(t2);
-	+/
+	Variant v2 = cast(double)7777;
+	writeln(v2.convertsTo!(double));
+	writeln(v2.convertsTo!(real));
+	writeln(v2.type);
+	writeln(v2.type == typeid(double));
 
 	return 0;
 }
