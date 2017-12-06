@@ -259,7 +259,12 @@ void main(string[] args)
 			{
 				string var_name = stmt.children[1].matches[0];
 				writeln(`    `, var_name);
-				writeln(`    `, var_tbl[var_name]);
+				long *found = var_name in var_tbl;
+				if (found)
+					writeln(`    `, *found);
+				else
+					writeln(`    null`);
+				//writeln(`    `, var_tbl[var_name]);
 			}
 			break;
 		case `Lang1.StatementBlock`:
