@@ -107,11 +107,16 @@ private ParseTree[] find_named_children(ref ParseTree p, string def_type)
 
 private void cut_unnecessary_nodes(ref ParseTree p, string[] names = null, string[] names2 = null)
 {
-	import std.algorithm : canFind, startsWith;
+	import std.algorithm : canFind, endsWith, startsWith;
+
 	//import std.stdio : writeln;
 	import std.string : indexOf;
 
-	if (names2 !is null && names2.canFind(p.name))
+	if (p.name.endsWith(`_`))
+	{
+		p.matches.length = 0;
+	}
+	else if (names2 !is null && names2.canFind(p.name))
 	{
 		p.matches.length = 0;
 	}
@@ -160,13 +165,13 @@ Lang1:
     VarStatement    < VarKeyword VarAssign ";"
     LetKeyword      < "let"
     LetDecl         < LetKeyword VarAssign ";"
-    StatementBlock  < "{" LetDecl* (Statement / StatementBlock)* "}"
+    StatementBlock_ < "{" LetDecl* (Statement / StatementBlock_)* "}"
     Statement       < VarStatement / "print" Ident ";"
     DecimalInteger  <- Integer IntegerSuffix?
     Integer         <- digit (digit/"_")*
     IntegerSuffix   <- "Lu" / "LU" / "uL" / "UL"
                      / "L" / "u" / "U"
-    _Def            < Statement / StatementBlock / _Prototype / EasyDoc
+    _Def            < Statement / StatementBlock_ / _Prototype / EasyDoc
     Ident           < (!Keywords identifier)
     _Prototype      < Function / Procedure
     Function        < ;FunctionHead Name Parameters ":"? ReturnValue ";"
@@ -221,9 +226,9 @@ void main(string[] args)
 	//cut_unnecessary_nodes(mod, [`D.DeclDefs`, `D.DeclDef`, `D.Declaration`,
 	//		`D.BasicTypeX`, `D.Type`, `D.Declarators`]);
 	auto mod = Lang1(src);
-	cut_unnecessary_nodes(mod, null, [`Lang1`, `Lang1.StatementBlock`]);
+	cut_unnecessary_nodes(mod, null, [`Lang1`]);
 	writeln(mod);
-	//writeln(mod.children[0].name);
+	writeln(mod.children[0].name);
 	exit(0);
 
 	foreach (arg; args)
