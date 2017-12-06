@@ -22,7 +22,8 @@ import std.array;
 import std.bigint;
 import std.conv;
 import std.datetime;
-import std.datetime.stopwatch;
+
+//import std.datetime.stopwatch;
 import std.datetime.systime;
 import std.file;
 import std.format;
@@ -630,7 +631,9 @@ int main()
 	}
 
 	{
-		std.datetime.stopwatch.StopWatch sw;
+		import std.datetime.stopwatch;
+
+		StopWatch sw;
 		sw.start();
 		Packer pk;
 		pk.beginArray(3).pack(true, cast(real) 123);
@@ -680,12 +683,14 @@ int main()
 	}
 
 	{
-		std.datetime.stopwatch.StopWatch sw;
+		import std.datetime.stopwatch;
+
+		StopWatch sw;
 		sw.start();
 		Packer pk;
 		pk.beginMap(2);
 		pk.pack("A", 123);
-		pk.pack("B", cast(real)123);
+		pk.pack("B", cast(real) 123);
 		writeln(pk);
 		auto unpacker = StreamingUnpacker(pk.stream.data);
 		foreach (unpacked; unpacker)
@@ -697,7 +702,7 @@ int main()
 				auto keys = mp.keys;
 				writeln(keys);
 				writeln(keys.length);
-				foreach(key; keys)
+				foreach (key; keys)
 				{
 					writeln(key.as!(string));
 					auto val = mp[key];
