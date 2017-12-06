@@ -1,4 +1,5 @@
 import my_common;
+import vibe.data.bson;
 import vibe.data.json;
 
 import std.array;
@@ -180,17 +181,23 @@ class C_GitHubApi
 				//string data = cast(string) this.http.data;
 				//if (data.canFind(`API rate limit exceeded`))
 				if (("x-ratelimit-remaining" in this.http.headers)
-						&& to!long(this.http.headers["x-ratelimit-remaining"]) == 0)
+						&& to!long(
+							this.http.headers["x-ratelimit-remaining"]) == 0)
 				{
 					long rateRemaining;
 					SysTime rateResetTime;
 					if ("x-ratelimit-remaining" in this.http.headers)
-						rateRemaining = to!long(this.http.headers["x-ratelimit-remaining"]);
+						rateRemaining = to!long(
+								this.http
+								.headers["x-ratelimit-remaining"]);
 					long v_rate_reset = 0;
 					if ("x-ratelimit-reset" in this.http.headers)
-						v_rate_reset = to!long(this.http.headers["x-ratelimit-reset"]);
+						v_rate_reset = to!long(
+								this.http
+								.headers["x-ratelimit-reset"]);
 					rateResetTime = SysTime(unixTimeToStdTime(v_rate_reset));
-					writeln(`rate_limit_exceeded error!: rateResetTime=`, rateResetTime);
+					writeln(`rate_limit_exceeded error!: rateResetTime=`,
+							rateResetTime);
 					/+
 					SysTime currentTime = Clock.currTime();
 					writeln(currentTime);
@@ -213,7 +220,8 @@ class C_GitHubApi
 				return -1;
 			}
 			if (this.http.headers["content-type"] != "application/json"
-					&& this.http.headers["content-type"] != "application/json; charset=utf-8")
+					&& this.http.headers["content-type"]
+					!= "application/json; charset=utf-8")
 			{
 				writeln(`not application/json`);
 				writeln(this.http.headers);
@@ -433,8 +441,8 @@ int main()
 	range_max <<= 128;
 	for (;;)
 	{
-		writeln(`[RANGE] `, range_min, `=`, is_ok(range_min), `==>`, range_max,
-				`=`, is_ok(range_max));
+		writeln(`[RANGE] `, range_min, `=`, is_ok(range_min), `==>`,
+				range_max, `=`, is_ok(range_max));
 		if (is_ok(range_max))
 		{
 			writeln(`range_max is ok: `, range_max, ` `, range_max.toHex);
@@ -477,7 +485,8 @@ int main()
 		int f_a;
 	}
 
-	alias myvariant1 = Algebraic!(int, long, double, real, string, A, int[int], BigInt, ubyte[]);
+	alias myvariant1 = Algebraic!(int, long, double, real, string, A,
+			int[int], BigInt, ubyte[]);
 	alias myvariant2 = Algebraic!(int, long, double /*, real*/ );
 	writeln(myvariant1.sizeof);
 	writeln(myvariant2.sizeof);
@@ -520,6 +529,39 @@ int main()
 	writeln(vstr2);
 	Variant vstr3 = cast(string) null;
 	writeln(vstr3.convertsTo!(string));
+
+	struct S
+	{
+		string field1;
+		long field2;
+		real field3;
+	}
+
+	//Bson b3 = S("foo", long.max, long.max).serializeToBson();
+
+	//auto s1 = S("foo", 1234, 1234);
+	//ubyte[] s1_data = toBsonData(s1);
+	//auto s2 = fromBsonData!S(s1_data);
+	//writeln(`s2=`, s2);
+	Bson b2 = Bson.emptyObject;
+	b2["field1"] = "foo";
+	b2["field2"] = 42;
+	b2["field3"] = true;
+	b2["field4"] = long.max;
+	b2["field5"] = cast(real)long.max;
+
+	//Bson b3 = S("foo", 1234, 1234).serializeToBson();
+	writeln(long.max);
+	writeln(ulong.max);
+	//writeln(b3);
+	immutable(ubyte)[] b3_data = b2.data;
+	writeln(`A`);
+	auto b4 = Bson(Bson.Type.object, b3_data);
+	writeln(`B`);
+	writeln(`b4=`, b4);
+	real zzz = b4["field5"].get!double;
+	writeln(b4["field4"].type);
+	writeln(b4["field5"].type);
 
 	return 0;
 }
