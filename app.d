@@ -1,3 +1,4 @@
+module msgpack_d2;
 import my_common;
 import vibe.data.bson;
 import vibe.data.json;
