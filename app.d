@@ -776,6 +776,29 @@ int main()
 		writeln("[real]");
 	else if (type == typeid(double))
 		writeln("[double]");
+	else if (type == typeid(Variant[Variant]))
+		writeln("<Variant[Variant]>");
+
+	Variant v3 = vmap;
+	type = v3.type;
+	if (type == typeid(real))
+		writeln("[real]");
+	else if (type == typeid(double))
+		writeln("[double]");
+	else if (type == typeid(Variant[Variant]))
+		writeln("<Variant[Variant]>");
+
+	Variant[] vary;
+	Variant v4 = vary;
+	type = v4.type;
+	if (type == typeid(real))
+		writeln("[real]");
+	else if (type == typeid(double))
+		writeln("[double]");
+	else if (type == typeid(Variant[Variant]))
+		writeln("<Variant[Variant]>");
+	else if (type == typeid(Variant[]))
+		writeln("<Variant[]>");
 
 	return 0;
 }
