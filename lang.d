@@ -154,7 +154,7 @@ void cut_unnecessary_nodes(TParseTree)(ref TParseTree p, string[] names = null,
 	}
 	foreach (ref child; p.children)
 	{
-		cut_unnecessary_nodes(child, names, names2);
+		cut_unnecessary_nodes!TParseTree(child, names, names2);
 	}
 }
 
