@@ -175,7 +175,7 @@ Lang1:
     PrintStatement  < PrintKeyword Identifier ";"
     _Statement      < VarStatement / PrintStatement
     DecimalInteger  <- Integer IntegerSuffix?
-    Integer         <- digit (digit/"_")*
+    Integer         <~ digit (digit/"_")*
     IntegerSuffix   <- "Lu" / "LU" / "uL" / "UL"
                      / "L" / "u" / "U"
     _Def            < _Statement / StatementBlock_ / _Prototype / EasyDoc
@@ -206,7 +206,7 @@ Lang1:
 `));
 
 string src = `
-var x = 1;
+var x = 1234;
 { let x = 2; let y = 3;
   print x;
   print y;
@@ -237,6 +237,7 @@ void main(string[] args)
 	cut_nodes(mod, true, null, null);
 	writeln(mod);
 	writeln(mod.children[0].name);
+	long[string] var_tbl;
 	for (size_t i = 0; i < mod.children.length; i++)
 	{
 		//writeln(`  `, mod.children[i].name);
@@ -245,8 +246,21 @@ void main(string[] args)
 		switch (stmt.name)
 		{
 		case `Lang1.VarStatement`:
+			{
+				string var_name = stmt.children[0].matches[0];
+				writeln(`    `, var_name);
+				long var_value = std.conv.to!long(stmt.children[1].matches[0]);
+				writeln(`    `, var_value);
+				var_tbl[var_name] = var_value;
+				writeln(`    `, var_tbl);
+			}
 			break;
 		case `Lang1.PrintStatement`:
+			{
+				string var_name = stmt.children[1].matches[0];
+				writeln(`    `, var_name);
+				writeln(`    `, var_tbl[var_name]);
+			}
 			break;
 		case `Lang1.StatementBlock`:
 			break;
