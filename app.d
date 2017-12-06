@@ -808,10 +808,15 @@ int main()
 
 	//alias Variant = VariantN!(maxSize!(creal, char[], void delegate()));
 	//alias MyVariant = VariantN!(maxSize!(real, char[], void delegate()));
-	alias MyVariant = VariantN!(maxSize!(real, char[]));
-	alias NMyVariant = Nullable!MyVariant;
+	//alias MyVariant = VariantN!(maxSize!(real, char[]));
+	//alias MyVariant = VariantN!(maxSize!(real, char[]));
+	//alias MyVariant = VariantN!(8);
+	alias MyVariant = VariantN!(real.sizeof);
 	writeln(MyVariant.sizeof);
-	writeln(NMyVariant.sizeof);
+	writeln((char[]).sizeof);
+	MyVariant v6 = nvary;
+	creal cr0;
+	v6 = cr0;
 
 	return 0;
 }
