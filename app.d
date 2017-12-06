@@ -21,6 +21,7 @@ import std.array;
 import std.bigint;
 import std.conv;
 import std.datetime;
+import std.datetime.stopwatch;
 import std.datetime.systime;
 import std.file;
 import std.format;
@@ -563,10 +564,12 @@ int main()
 		float y;
 		string z;
 		real r;
+		real[string] tbl;
 	}
 
 	//S input = S(10, 25.5, "message", long.max);
 	S input = S(10, 25.5, "message", ulong.max);
+	input.tbl["xyz"] = ulong.max;
 
 	// serialize data
 	ubyte[] inData = pack(input);
@@ -592,6 +595,108 @@ int main()
 	//auto zzz2 = std.conv.to!long(target.r);
 	auto zzz2 = std.conv.to!ulong(target.r);
 	writeln(zzz2);
+
+	class Base
+	{
+		string str = "foo";
+	}
+
+	class C : Base
+	{
+		int num;
+		this(int n)
+		{
+			num = n;
+		}
+	}
+
+	registerClass!(C);
+
+	struct Trans
+	{
+		Base[string] tbl;
+	}
+
+	{
+		Packer pk;
+		Base c = new C(1000);
+		pk.pack(c);
+
+		Base c2 = new C(5);
+		unpack(pk.stream.data, c2);
+		assert(1000 == (cast(C) c2).num);
+		writeln(c2, ` `, (cast(C) c2).num);
+	}
+
+	{
+		std.datetime.stopwatch.StopWatch sw;
+		sw.start();
+		Packer pk;
+		pk.beginArray(3).pack(true, cast(real) 123);
+		pk.pack("ABC");
+		writeln(pk);
+		auto unpacker = StreamingUnpacker(pk.stream.data);
+		foreach (unpacked; unpacker)
+		{
+			if (unpacked.type == Value.Type.array)
+			{
+				foreach (obj; unpacked)
+				{
+					switch (obj.type)
+					{
+					case Value.Type.boolean:
+						writeln(`[boolean]`, obj.as!(bool));
+						break;
+					case Value.Type.signed:
+						writeln(`[signed]`, obj.as!(long));
+						break;
+					case Value.Type.unsigned:
+						writeln(`[unsigned]`, obj.as!(ulong));
+						break;
+					case Value.Type.floating:
+						writeln(`[floating]`, obj.as!(real));
+						break;
+					//case cast(Value.Type) 0xd4:
+					/+
+					case Value.Type.ext:
+						writeln(`[ext]`);
+						writeln(`[ext]`, obj.as!(real));
+						break;
+					+/
+					case Value.Type.raw:
+						writeln(`[raw]`, obj.as!(string));
+						break;
+					default:
+						writeln(obj.type);
+						throw new Exception("Unknown type");
+					}
+				}
+			}
+			else
+			{
+				/+
+				if (unpacked.type == Value.Type.boolean)
+					writeln(unpacked.as!(bool));
+				else
+					writeln("Message: ", unpacked.as!(string));
+				+/
+			}
+		}
+		writeln(sw.peek());
+	}
+
+	/+
+	Trans t;
+	t.tbl["abc"] = new C(7777);
+	writeln(t);
+
+	// serialize data
+	ubyte[] inData2 = pack(t);
+
+	// unserialize the data
+	Trans t2 = inData2.unpack!Trans();
+	writeln(t2);
+	+/
 
 	return 0;
 }
