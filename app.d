@@ -755,17 +755,27 @@ int main()
 	writeln(vmap[Variant(1234)]);
 	writeln(vmap[Variant("abc")]);
 
-	Variant v1 = cast(real)7777;
+	TypeInfo type;
+	Variant v1 = cast(real) 7777;
 	writeln(v1.convertsTo!(double));
 	writeln(v1.convertsTo!(real));
 	writeln(v1.type);
 	writeln(v1.type == typeid(real));
-
-	Variant v2 = cast(double)7777;
+	type = v1.type;
+	if (type == typeid(real))
+		writeln("[real]");
+	else if (type == typeid(double))
+		writeln("[double]");
+	Variant v2 = cast(double) 7777;
 	writeln(v2.convertsTo!(double));
 	writeln(v2.convertsTo!(real));
 	writeln(v2.type);
 	writeln(v2.type == typeid(double));
+	type = v2.type;
+	if (type == typeid(real))
+		writeln("[real]");
+	else if (type == typeid(double))
+		writeln("[double]");
 
 	return 0;
 }
