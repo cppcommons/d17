@@ -1,6 +1,7 @@
 import my_common;
 import vibe.data.bson;
 import vibe.data.json;
+import msgpack;
 
 import std.array;
 import std.conv;
@@ -530,13 +531,6 @@ int main()
 	Variant vstr3 = cast(string) null;
 	writeln(vstr3.convertsTo!(string));
 
-	struct S
-	{
-		string field1;
-		long field2;
-		real field3;
-	}
-
 	//Bson b3 = S("foo", long.max, long.max).serializeToBson();
 
 	//auto s1 = S("foo", 1234, 1234);
@@ -548,7 +542,7 @@ int main()
 	b2["field2"] = 42;
 	b2["field3"] = true;
 	b2["field4"] = long.max;
-	b2["field5"] = cast(real)long.max;
+	b2["field5"] = cast(real) long.max;
 
 	//Bson b3 = S("foo", 1234, 1234).serializeToBson();
 	writeln(long.max);
@@ -562,6 +556,42 @@ int main()
 	real zzz = b4["field5"].get!double;
 	writeln(b4["field4"].type);
 	writeln(b4["field5"].type);
+
+	struct S
+	{
+		int x;
+		float y;
+		string z;
+		real r;
+	}
+
+	//S input = S(10, 25.5, "message", long.max);
+	S input = S(10, 25.5, "message", ulong.max);
+
+	// serialize data
+	ubyte[] inData = pack(input);
+
+	// write data to a file
+	std.file.write("file.dat", inData);
+
+	// read data from a file
+	ubyte[] outData = cast(ubyte[]) read("file.dat");
+
+	// unserialize the data
+	S target = outData.unpack!S();
+
+	// verify data is the same
+	assert(target.x == input.x);
+	assert(target.y == input.y);
+	assert(target.z == input.z);
+	writeln(target.r == input.r);
+
+	writeln(input);
+	writeln(target);
+
+	//auto zzz2 = std.conv.to!long(target.r);
+	auto zzz2 = std.conv.to!ulong(target.r);
+	writeln(zzz2);
 
 	return 0;
 }
