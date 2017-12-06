@@ -105,18 +105,20 @@ private ParseTree[] find_named_children(ref ParseTree p, string def_type)
 	return result;
 }
 
-//private void cut_unnecessary_nodes(ref ParseTree p, string[] names = null, string[] names2 = null)
-void cut_unnecessary_nodes(TParseTree)(ref TParseTree p, string[] names = null,
-		string[] names2 = null)
+//private void cut_nodes(ref ParseTree p, string[] names = null, string[] names2 = null)
+void cut_nodes(TParseTree)(ref TParseTree p, string[] names1 = null, string[] names2 = null)
 {
 	import std.algorithm : canFind, endsWith, startsWith;
-
-	//import std.stdio : writeln;
 	import std.string : indexOf;
 
-	if (p.name.endsWith(`_`))
+	if (!p.name.canFind('.'))
 	{
 		p.matches.length = 0;
+	}
+	else if (p.name.endsWith(`_`))
+	{
+		p.matches.length = 0;
+		p.name = p.name[0 .. $ - 1];
 	}
 	else if (names2 !is null && names2.canFind(p.name))
 	{
@@ -133,7 +135,7 @@ void cut_unnecessary_nodes(TParseTree)(ref TParseTree p, string[] names = null,
 		ParseTree[] new_children;
 		foreach (ref child; p.children)
 		{
-			if (names !is null && names.canFind(child.name))
+			if (names1 !is null && names1.canFind(child.name))
 			{
 			}
 			else if (child.name.canFind('!'))
@@ -154,27 +156,29 @@ void cut_unnecessary_nodes(TParseTree)(ref TParseTree p, string[] names = null,
 	}
 	foreach (ref child; p.children)
 	{
-		cut_unnecessary_nodes!TParseTree(child, names, names2);
+		cut_nodes!TParseTree(child, names1, names2);
 	}
 }
 
 mixin(grammar(`
 Lang1:
     _TopLevel       < (_Def+ "[eof]"i) / (_Def+ eoi)
-    Keywords        < _VarKeyword / _LetKeyword / FunctionHead / ProcedureHead / Direction / _Type
+    Keywords        < _VarKeyword / _LetKeyword / PrintKeyword / FunctionHead / ProcedureHead / Direction / _Type
     _VarKeyword     < "var"
-    _VarAssign      < Ident "=" DecimalInteger
+    _VarAssign      < Identifier "=" Integer
     VarStatement    < _VarKeyword _VarAssign ";"
     _LetKeyword     < "let"
     LetDecl         < _LetKeyword _VarAssign ";"
-    StatementBlock_ < "{" LetDecl* (Statement / StatementBlock_)* "}"
-    Statement       < VarStatement / "print" Ident ";"
+    StatementBlock_ < "{" LetDecl* (_Statement / StatementBlock_)* "}"
+    PrintKeyword    < "print"
+    PrintStatement  < PrintKeyword Identifier ";"
+    _Statement      < VarStatement / PrintStatement
     DecimalInteger  <- Integer IntegerSuffix?
     Integer         <- digit (digit/"_")*
     IntegerSuffix   <- "Lu" / "LU" / "uL" / "UL"
                      / "L" / "u" / "U"
-    _Def            < Statement / StatementBlock_ / _Prototype / EasyDoc
-    Ident           < (!Keywords identifier)
+    _Def            < _Statement / StatementBlock_ / _Prototype / EasyDoc
+    Identifier      < (!Keywords identifier)
     _Prototype      < Function / Procedure
     Function        < ;FunctionHead Name Parameters ":"? ReturnValue ";"
     FunctionHead    < ("function" / "func")
@@ -225,10 +229,11 @@ void main(string[] args)
 
 	//GenericD!(ParseTree) D;
 	//auto mod = D.D.Module(src);
-	//cut_unnecessary_nodes(mod, [`D.DeclDefs`, `D.DeclDef`, `D.Declaration`,
+	//cut_nodes(mod, [`D.DeclDefs`, `D.DeclDef`, `D.Declaration`,
 	//		`D.BasicTypeX`, `D.Type`, `D.Declarators`]);
 	auto mod = Lang1(src);
-	cut_unnecessary_nodes(mod, null, [`Lang1`]);
+	//cut_nodes(mod, null, [`Lang1`]);
+	cut_nodes(mod, null, null);
 	writeln(mod);
 	writeln(mod.children[0].name);
 	exit(0);
@@ -256,7 +261,7 @@ void main(string[] args)
 		//"EasyIDL.ParameterList", "EasyIDL.FunctionHead", "EasyIDL.ProcedureHead", "EasyIDL.Type"
 		];
 		/*p =*/
-		cut_unnecessary_nodes(p);
+		cut_nodes(p);
 		writeln("(2)", p.name);
 		writeln("(3)", p.children[0].name);
 		writeln(p);
@@ -265,7 +270,7 @@ void main(string[] args)
 			writeln("not success!");
 			return;
 		}
-		//cut_unnecessary_nodes(p, unnecessary);
+		//cut_nodes(p, unnecessary);
 		//writeln(p);
 		////writeln(p.matches.length);
 		for (int i = 0; i < p.children.length; i++)
