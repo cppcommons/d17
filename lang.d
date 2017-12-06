@@ -108,14 +108,12 @@ private ParseTree[] find_named_children(ref ParseTree p, string def_type)
 private void cut_unnecessary_nodes(ref ParseTree p, string[] names = null, string[] names2 = null)
 {
 	import std.algorithm : canFind, startsWith;
-	import std.stdio : writeln;
+	//import std.stdio : writeln;
 	import std.string : indexOf;
 
 	if (names2 !is null && names2.canFind(p.name))
 	{
 		p.matches.length = 0;
-		//p.matches = [`...`];
-		//p.matches = null;
 	}
 
 	if (p.children.length == 0)
@@ -134,15 +132,13 @@ private void cut_unnecessary_nodes(ref ParseTree p, string[] names = null, strin
 			else if (child.name.canFind('!'))
 			{
 			}
-			else if (child.name.indexOf("._") == -1 /*!names.canFind(child.name)*/ )
+			else if (child.name.indexOf("._") == -1)
 			{
 				new_children ~= child;
 				continue;
 			}
-			////writeln("Found(A): ", child.name, " ", p.name);
 			foreach (ref grand_child; child.children)
 			{
-				////writeln("  grand_child.name: ", grand_child.name);
 				new_children ~= grand_child;
 			}
 			processed = true;
