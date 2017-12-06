@@ -800,5 +800,10 @@ int main()
 	else if (type == typeid(Variant[]))
 		writeln("<Variant[]>");
 
+	alias NVariant = Nullable!Variant;
+	NVariant[] nvary;
+	Variant v5 = nvary;
+	writeln(v5.type == typeid(NVariant[]));
+
 	return 0;
 }
