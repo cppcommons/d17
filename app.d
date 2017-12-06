@@ -806,5 +806,12 @@ int main()
 	writeln(v5.type == typeid(NVariant[]));
 	writeln(NVariant.sizeof);
 
+	//alias Variant = VariantN!(maxSize!(creal, char[], void delegate()));
+	//alias MyVariant = VariantN!(maxSize!(real, char[], void delegate()));
+	alias MyVariant = VariantN!(maxSize!(real, char[]));
+	alias NMyVariant = Nullable!MyVariant;
+	writeln(MyVariant.sizeof);
+	writeln(NMyVariant.sizeof);
+
 	return 0;
 }
