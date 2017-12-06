@@ -237,68 +237,25 @@ void main(string[] args)
 	cut_nodes(mod, true, null, null);
 	writeln(mod);
 	writeln(mod.children[0].name);
-	for (size_t i=0; i<mod.children.length; i++)
+	for (size_t i = 0; i < mod.children.length; i++)
 	{
-		writeln(`  `, mod.children[i].name);
-	}
-	exit(0);
-
-	foreach (arg; args)
-	{
-		writeln(arg);
-	}
-
-	{
-		import std.string : strip;
-
-		writefln("pkgs.length=%d", pkgs.length);
-		writefln("pkgs=%s", pkgs);
-		if (strip(pkgs) == "")
+		//writeln(`  `, mod.children[i].name);
+		ParseTree* stmt = &(mod.children[i]);
+		writeln(`  `, stmt.name);
+		switch (stmt.name)
 		{
-			writeln("empty pkgs");
-			return;
-		}
-		auto p = EasyIDL(pkgs);
-		writeln("(0)", p.name);
-		writeln("(1)", p.children[0].name);
-		writeln(p);
-		string[] unnecessary = [ //"EasyIDL.Idl", "EasyIDL.Def", "EasyIDL.Prototype", /*"EasyIDL.Parameters",*/
-		//"EasyIDL.ParameterList", "EasyIDL.FunctionHead", "EasyIDL.ProcedureHead", "EasyIDL.Type"
-		];
-		/*p =*/
-		cut_nodes(p);
-		writeln("(2)", p.name);
-		writeln("(3)", p.children[0].name);
-		writeln(p);
-		if (!p.successful)
-		{
-			writeln("not success!");
-			return;
-		}
-		//cut_nodes(p, unnecessary);
-		//writeln(p);
-		////writeln(p.matches.length);
-		for (int i = 0; i < p.children.length; i++)
-		{
-			import std.string : replace, splitLines, strip;
-
-			auto child = p.children[i];
-			auto description = child.input[child.begin .. child.end];
-			description = description.strip();
-			foreach (line; description.splitLines)
-			{
-				if (line.strip().length != 0)
-					writeln("//EasyIDL: ", line);
-			}
-			writefln("%d: %s ==> %s", i, child.name, child.matches.join(" ").strip());
-			//gen_cpp_code("mymodule_", child);
-			writeln();
+		case `Lang1.VarStatement`:
+			break;
+		case `Lang1.PrintStatement`:
+			break;
+		case `Lang1.StatementBlock`:
+			break;
+		default:
+			break;
 		}
 	}
-
-	//import pegged.examples.dgrammar;
-	//asModule("dparser", "temp_dparser", Dgrammar);
 	writeln("kanji=漢字");
+	exit(0);
 }
 
 /+
