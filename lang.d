@@ -105,7 +105,9 @@ private ParseTree[] find_named_children(ref ParseTree p, string def_type)
 	return result;
 }
 
-private void cut_unnecessary_nodes(ref ParseTree p, string[] names = null, string[] names2 = null)
+//private void cut_unnecessary_nodes(ref ParseTree p, string[] names = null, string[] names2 = null)
+void cut_unnecessary_nodes(TParseTree)(ref TParseTree p, string[] names = null,
+		string[] names2 = null)
 {
 	import std.algorithm : canFind, endsWith, startsWith;
 
@@ -159,12 +161,12 @@ private void cut_unnecessary_nodes(ref ParseTree p, string[] names = null, strin
 mixin(grammar(`
 Lang1:
     _TopLevel       < (_Def+ "[eof]"i) / (_Def+ eoi)
-    Keywords        < VarKeyword / LetKeyword / FunctionHead / ProcedureHead / Direction / _Type
-    VarKeyword      < "var"
-    VarAssign       < Ident "=" DecimalInteger
-    VarStatement    < VarKeyword VarAssign ";"
-    LetKeyword      < "let"
-    LetDecl         < LetKeyword VarAssign ";"
+    Keywords        < _VarKeyword / _LetKeyword / FunctionHead / ProcedureHead / Direction / _Type
+    _VarKeyword     < "var"
+    _VarAssign      < Ident "=" DecimalInteger
+    VarStatement    < _VarKeyword _VarAssign ";"
+    _LetKeyword     < "let"
+    LetDecl         < _LetKeyword _VarAssign ";"
     StatementBlock_ < "{" LetDecl* (Statement / StatementBlock_)* "}"
     Statement       < VarStatement / "print" Ident ";"
     DecimalInteger  <- Integer IntegerSuffix?
