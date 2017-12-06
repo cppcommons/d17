@@ -106,12 +106,13 @@ private ParseTree[] find_named_children(ref ParseTree p, string def_type)
 }
 
 //private void cut_nodes(ref ParseTree p, string[] names = null, string[] names2 = null)
-void cut_nodes(TParseTree)(ref TParseTree p, string[] names1 = null, string[] names2 = null)
+void cut_nodes(TParseTree)(ref TParseTree p, bool clear_root_matches = false,
+		string[] names1 = null, string[] names2 = null)
 {
 	import std.algorithm : canFind, endsWith, startsWith;
 	import std.string : indexOf;
 
-	if (!p.name.canFind('.'))
+	if (clear_root_matches && !p.name.canFind('.'))
 	{
 		p.matches.length = 0;
 	}
@@ -156,7 +157,7 @@ void cut_nodes(TParseTree)(ref TParseTree p, string[] names1 = null, string[] na
 	}
 	foreach (ref child; p.children)
 	{
-		cut_nodes!TParseTree(child, names1, names2);
+		cut_nodes!TParseTree(child, clear_root_matches, names1, names2);
 	}
 }
 
@@ -232,10 +233,14 @@ void main(string[] args)
 	//cut_nodes(mod, [`D.DeclDefs`, `D.DeclDef`, `D.Declaration`,
 	//		`D.BasicTypeX`, `D.Type`, `D.Declarators`]);
 	auto mod = Lang1(src);
-	//cut_nodes(mod, null, [`Lang1`]);
-	cut_nodes(mod, null, null);
+	//cut_nodes(mod, false, null, null);
+	cut_nodes(mod, true, null, null);
 	writeln(mod);
 	writeln(mod.children[0].name);
+	for (size_t i=0; i<mod.children.length; i++)
+	{
+		writeln(`  `, mod.children[i].name);
+	}
 	exit(0);
 
 	foreach (arg; args)
