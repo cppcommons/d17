@@ -1,0 +1,105 @@
+import pegged.grammar;
+import pegged.cutter;
+
+import std.conv;
+import std.datetime.stopwatch;
+import std.stdio;
+
+enum Lang1Grammar = `
+Lang1:
+    _TopLevel       < _EvalUnit+ eoi
+    _EvalUnit       < VarDecl / _Statement / StatementBlock_
+    _Keywords       < "var" / "let" / PrintKeyword
+    Identifier      < (!_Keywords identifier)
+    _VarAssign      < Identifier "=" Integer
+    VarDecl         < "var" _VarAssign ";"
+    LetDecl         < "let" _VarAssign ";"
+    StatementBlock_ < "{" LetDecl* (_Statement / StatementBlock_)* "}"
+    AssignStatement < _VarAssign ";"
+    PrintKeyword    < "print"
+    PrintStatement  < PrintKeyword Identifier ";"
+    _Statement      < AssignStatement / PrintStatement
+    Integer         <~ digit (digit/"_")*
+    Comment1        <~ "/*" (!"*/" .)* "*/"
+    Comment2        <~ "//" (!endOfLine .)* :endOfLine
+    Spacing         <- (blank / Comment1 / Comment2)*
+`;
+
+mixin(grammar(Lang1Grammar));
+
+string src = `
+var x = 1234;
+x = 2222;
+{ let x = 2; let y = 3;
+  print x;
+  print y;
+}
+print x;
+print y;
+`;
+
+__gshared static int abc = 0;
+
+void main(string[] args)
+{
+
+	StopWatch sw;
+	sw.start();
+
+	sw.reset();
+	auto mod = Lang1(src);
+	writeln(`(A)`, sw.peek());
+
+	writeln(mod);
+
+	sw.reset();
+	//cutNodes(mod, null, null);
+	mod.cutNodes(null, null);
+	writeln(`(B)`, sw.peek());
+
+	writeln(mod);
+	writeln(mod.children[0].name);
+
+	sw.reset();
+	long[string] var_tbl;
+	for (size_t i = 0; i < mod.children.length; i++)
+	{
+		//writeln(`  `, mod.children[i].name);
+		ParseTree* stmt = &(mod.children[i]);
+		writeln(`  `, stmt.name);
+		switch (stmt.name)
+		{
+		case `Lang1.VarDecl`:
+			{
+				string var_name = stmt.children[0].matches[0];
+				writeln(`    `, var_name);
+				//long var_value = std.conv.to!long(stmt.children[1].matches[0]);
+				long var_value = to!long(stmt.children[1].matches[0]);
+				writeln(`    `, var_value);
+				var_tbl[var_name] = var_value;
+				writeln(`    `, var_tbl);
+			}
+			break;
+		case `Lang1.PrintStatement`:
+			{
+				string var_name = stmt.children[1].matches[0];
+				writeln(`    `, var_name);
+				long* found = var_name in var_tbl;
+				if (found)
+					writeln(`    `, *found);
+				else
+					writeln(`    null`);
+				//writeln(`    `, var_tbl[var_name]);
+			}
+			break;
+		case `Lang1.StatementBlock`:
+			break;
+		default:
+			break;
+		}
+	}
+	writeln("kanji=漢字");
+	writeln(`(C)`, sw.peek());
+
+	//writeln(sw.peek());
+}
