@@ -1,175 +1,18 @@
 import pegged.grammar; // https://github.com/PhilippeSigaud/Pegged/wiki
-import dparser; //import pegged.examples.dgrammar; mixin(grammar(Dgrammar));
+//import dparser; //import pegged.examples.dgrammar; mixin(grammar(Dgrammar));
+import lang1;
 
-private void exit(int code)
-{
-	import std.c.stdlib;
+import std.conv;
+import std.datetime.stopwatch;
+import std.variant;
 
-	std.c.stdlib.exit(code);
-}
-
-string pkgs = `
-/*before*/
- //xyz
- /*123*/
-/+
-first doc
- doc
- doc.
-+/
-
-// comment
-
- handle archive_t;
- handle handle_t;
- function test() : char*;
- function test(...):real32;
- function test(a char*):int64*;
- procedure test(a: int32 dual, b: int64);
- proc test(a: int32 dual, b: int64 out);
- func test(h: handle archive_t, a: int32, b: char * out) int32;
- func test(json) json;
- func test(msgpack) msgpack;
- func test(a: int32* dual) int32*;
-[doc]
-doc doc doc
-[/doc]
- func test(a: ucstring8 dual, /*ttt*/ b: mbstring in) ucstring32;
- /*
- this function is ...abc!
- this function is ...abc!
- */
-[eof]
-aaa bbb
-xxx
-this is end of file.
-`;
-
-//
-// "EasyIDL.Type"
-mixin(grammar(`
-EasyIDL:
-    _Idl            < (_Def+ "[eof]"i) / (_Def+ eoi)
-    EndOfFile       <- "[eof]"i / eoi
-    Keywords        < FunctionHead / ProcedureHead / Direction / _Type
-    _Def            < Handle / _Prototype / EasyDoc
-    Ident           < (!Keywords identifier)
-    Handle          < "handle" Name ";"
-    _Prototype      < Function / Procedure
-    Function        < ;FunctionHead Name Parameters ":"? ReturnValue ";"
-    FunctionHead    < ("function" / "func")
-    Procedure       < ;ProcedureHead Name Parameters ";"
-    ProcedureHead   < ("procedure" / "proc")
-    ReturnValue     < _Type
-    Parameters      < "(" _ParameterList? ")"
-    _ParameterList  < VarArgs / JsonType / MsgpackType / Parameter (',' Parameter)*
-    Parameter       < Name ":"? _Type Direction?
-    Name            < identifier
-    VarArgs         < "..."
-    JsonType        < "json"
-    MsgpackType     < "msgpack"
-    Direction       < "in" / "out" / "dual"
-    _Type           < Primitive / ManagedType / MsgpackType / JsonType / HandleType
-    Primitive       < ("int32" / "int64" / "byte" / "char" / "wchar" / "real32" / "real64") PointerMark?
-    #Pointer        < Primitive ;PointerMark
-    PointerMark     < "*"
-    ManagedType     < "mbstring" / "ansistring" / "ucstring8" / "ucstring16" / "ucstring32" / "array8" / "array16" / "array32" / "array64" / "object" / "service"
-    HandleType      < :"handle" identifier
-    EasyDoc         <~ (:"/+" (!"+/" .)* :"+/") / (:"[doc]"i (!"[/doc]"i .)* :"[/doc]"i)
-    Comment1        <~ "/*" (!"*/" .)* "*/"
-    Comment2        <~ "//" (!endOfLine .)* :endOfLine
-    #Spacing        <- (blank / Comment1 / Comment2 / Comment3)*
-    Spacing         <- (blank / Comment1 / Comment2)*
-`));
-
-private string get_def_type(ref ParseTree p)
-{
-	import std.string : split;
-
-	return p.name.split(".")[1];
-}
-
-private ParseTree[] find_named_children(ref ParseTree p, string def_type)
-{
-	import std.stdio : writefln, writeln;
-	import std.string : split;
-
-	ParseTree[] result;
-	foreach (ref child; p.children)
-	{
-		string child_def_type = child.get_def_type();
-		writefln("child_def_type=%s", child_def_type);
-		if (child_def_type == def_type)
-			result ~= child;
-	}
-	return result;
-}
-
-//private void cut_nodes(ref ParseTree p, string[] names = null, string[] names2 = null)
-void cut_nodes(TParseTree)(ref TParseTree p, bool clear_root_matches = false,
-		string[] names1 = null, string[] names2 = null)
-{
-	import std.algorithm : canFind, endsWith, startsWith;
-	import std.string : indexOf;
-
-	if (clear_root_matches && !p.name.canFind('.'))
-	{
-		p.matches.length = 0;
-	}
-	else if (p.name.endsWith(`_`))
-	{
-		p.matches.length = 0;
-		p.name = p.name[0 .. $ - 1];
-	}
-	else if (names2 !is null && names2.canFind(p.name))
-	{
-		p.matches.length = 0;
-	}
-
-	if (p.children.length == 0)
-		return;
-
-	bool processed = true;
-	while (processed)
-	{
-		processed = false;
-		ParseTree[] new_children;
-		foreach (ref child; p.children)
-		{
-			if (names1 !is null && names1.canFind(child.name))
-			{
-			}
-			else if (child.name.canFind('!'))
-			{
-			}
-			else if (child.name.indexOf("._") == -1)
-			{
-				new_children ~= child;
-				continue;
-			}
-			foreach (ref grand_child; child.children)
-			{
-				new_children ~= grand_child;
-			}
-			processed = true;
-		}
-		p.children = new_children;
-	}
-	foreach (ref child; p.children)
-	{
-		cut_nodes!TParseTree(child, clear_root_matches, names1, names2);
-	}
-}
-
-mixin(grammar(`
+enum Lang1Grammar = `
 Lang1:
     _TopLevel       < (_Def+ "[eof]"i) / (_Def+ eoi)
-    Keywords        < _VarKeyword / _LetKeyword / PrintKeyword / FunctionHead / ProcedureHead / Direction / _Type
-    _VarKeyword     < "var"
+    Keywords        < "var" / "let" / PrintKeyword / FunctionHead / ProcedureHead / Direction / _Type
     _VarAssign      < Identifier "=" Integer
-    VarStatement    < _VarKeyword _VarAssign ";"
-    _LetKeyword     < "let"
-    LetDecl         < _LetKeyword _VarAssign ";"
+    VarStatement    < "var" _VarAssign ";"
+    LetDecl         < "let" _VarAssign ";"
     StatementBlock_ < "{" LetDecl* (_Statement / StatementBlock_)* "}"
     PrintKeyword    < "print"
     PrintStatement  < PrintKeyword Identifier ";"
@@ -194,16 +37,14 @@ Lang1:
     JsonType        < "json"
     MsgpackType     < "msgpack"
     Direction       < "in" / "out" / "dual"
-    _Type           < Primitive / ManagedType / MsgpackType / JsonType / HandleType
-    Primitive       < ("int32" / "int64" / "byte" / "char" / "wchar" / "real32" / "real64") PointerMark?
-    PointerMark     < "*"
-    ManagedType     < "mbstring" / "ansistring" / "ucstring8" / "ucstring16" / "ucstring32" / "array8" / "array16" / "array32" / "array64" / "object" / "service"
-    HandleType      < :"handle" identifier
-    EasyDoc         <~ (:"/+" (!"+/" .)* :"+/") / (:"[doc]"i (!"[/doc]"i .)* :"[/doc]"i)
+    _Type           < MsgpackType / JsonType
+    EasyDoc         <~ (:"[doc]"i (!"[/doc]"i .)* :"[/doc]"i)
     Comment1        <~ "/*" (!"*/" .)* "*/"
     Comment2        <~ "//" (!endOfLine .)* :endOfLine
     Spacing         <- (blank / Comment1 / Comment2)*
-`));
+`;
+
+mixin(grammar(Lang1Grammar));
 
 string src = `
 var x = 1234;
@@ -218,25 +59,30 @@ print y;
 void main(string[] args)
 {
 	import std.stdio;
-	import std.array : join;
+	//import std.array : join;
 
-	version (none)
-	{
-		import dgrammar;
+	asModule(`lang1`, `lang1`, Lang1Grammar);
+	auto mod0 = lang1.Lang1(src);
+	//writeln(`mod0=`, mod0);
 
-		asModule("dparser", "temp_dparser", Dgrammar);
-		exit(0);
-	}
+	StopWatch sw;
+	sw.start();
 
-	//GenericD!(ParseTree) D;
-	//auto mod = D.D.Module(src);
-	//cut_nodes(mod, [`D.DeclDefs`, `D.DeclDef`, `D.Declaration`,
-	//		`D.BasicTypeX`, `D.Type`, `D.Declarators`]);
+	sw.reset();
 	auto mod = Lang1(src);
-	//cut_nodes(mod, false, null, null);
-	cut_nodes(mod, true, null, null);
+	writeln(`(A)`, sw.peek());
+
+	writeln(mod);
+
+	sw.reset();
+	//cut_nodes(mod, null, true, null);
+	cut_nodes(mod, null, false, null);
+	writeln(`(B)`, sw.peek());
+
 	writeln(mod);
 	writeln(mod.children[0].name);
+
+	sw.reset();
 	long[string] var_tbl;
 	for (size_t i = 0; i < mod.children.length; i++)
 	{
@@ -249,7 +95,8 @@ void main(string[] args)
 			{
 				string var_name = stmt.children[0].matches[0];
 				writeln(`    `, var_name);
-				long var_value = std.conv.to!long(stmt.children[1].matches[0]);
+				//long var_value = std.conv.to!long(stmt.children[1].matches[0]);
+				long var_value = to!long(stmt.children[1].matches[0]);
 				writeln(`    `, var_value);
 				var_tbl[var_name] = var_value;
 				writeln(`    `, var_tbl);
@@ -259,7 +106,7 @@ void main(string[] args)
 			{
 				string var_name = stmt.children[1].matches[0];
 				writeln(`    `, var_name);
-				long *found = var_name in var_tbl;
+				long* found = var_name in var_tbl;
 				if (found)
 					writeln(`    `, *found);
 				else
@@ -274,7 +121,59 @@ void main(string[] args)
 		}
 	}
 	writeln("kanji=漢字");
-	exit(0);
+	writeln(`(C)`, sw.peek());
+
+	Variant v;
+	//writeln(sw.peek());
+}
+
+void cut_nodes(TParseTree)(ref TParseTree p, string[] names1 = null,
+		bool clear_auto_nodes = false, string[] names2 = null)
+{
+	import std.algorithm : canFind, endsWith, startsWith;
+	import std.string : indexOf;
+
+	if (p.name.endsWith(`_`))
+	{
+		p.matches.length = 0;
+		p.name = p.name[0 .. $ - 1];
+	}
+	else if (names2 !is null && names2.canFind(p.name))
+	{
+		p.matches.length = 0;
+	}
+	if (p.children.length == 0)
+		return;
+	bool processed = true;
+	while (processed)
+	{
+		processed = false;
+		ParseTree[] new_children;
+		foreach (ref child; p.children)
+		{
+			if (child.name.canFind('!'))
+			{
+			}
+			else if (names1 !is null && names1.canFind(child.name))
+			{
+			}
+			else if (child.name.indexOf("._") == -1)
+			{
+				new_children ~= child;
+				continue;
+			}
+			foreach (ref grand_child; child.children)
+			{
+				new_children ~= grand_child;
+			}
+			processed = true;
+		}
+		p.children = new_children;
+	}
+	foreach (ref child; p.children)
+	{
+		cut_nodes!TParseTree(child, names1, clear_auto_nodes, names2);
+	}
 }
 
 /+
