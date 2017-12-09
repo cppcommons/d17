@@ -28,6 +28,8 @@ var y = 5678;
 dump;
 `;
 
+long[string] var_tbl;
+
 void main(string[] args)
 {
     ParseTree pt = Lang1(Lang1Source);
@@ -35,25 +37,40 @@ void main(string[] args)
     pt.cutNodes(); // バージョン4で追加
     writeln(pt);
     // これ以降を追加(バージョン3)
-    long[string] var_tbl;
+    //string code0 = compile(pt);
+    //writeln(code0);
+    enum ParseTree pt0 = parse(Lang1Source);
+    enum string code = compile(pt0);
+    writeln(code);
+    run!code();
+}
+
+pragma(inline) ParseTree parse(string src)
+{
+    ParseTree pt = Lang1(src);
+    pt.cutNodes();
+    return pt;
+}
+
+string compile(ParseTree pt)
+{
+    import std.format;
+    string result = "import std.conv, std.stdio;\n";
     for (size_t i = 0; i < pt.children.length; i++)
     {
         ParseTree* unit = &(pt.children[i]);
-        writeln(`[EXECUTE] `, unit.name);
         switch (unit.name)
         {
         case `Lang1.VarDeclaration`:
             {
                 string var_name = unit.children[0].matches[0];
-                writeln(`    `, var_name);
                 long var_value = to!long(unit.children[1].matches[0]);
-                writeln(`    `, var_value);
-                var_tbl[var_name] = var_value;
+                result ~= format!"var_tbl[`%s`] = %d;\n"(var_name, var_value);
             }
             break;
         case `Lang1.DumpStatement`:
             {
-                writeln(`    `, var_tbl);
+                result ~= "writeln(var_tbl);\n";
             }
             break;
         case `Lang1.StatementBlock`:
@@ -62,4 +79,9 @@ void main(string[] args)
             break;
         }
     }
+    return result;
+}
+
+void run(string code)() {
+    mixin(code);
 }
