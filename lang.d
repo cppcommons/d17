@@ -6,19 +6,19 @@ import std.stdio;
 enum Lang1Grammar = `
 Lang1:
 # Entry Point
-    _TopLevel       <  _EvalUnit+ eoi  # バージョン4で変更
+_TopLevel       <  _EvalUnit+ eoi  # バージョン4で変更
 # Keyword List
-    Keywords        <  "dump" / "var"
+Keywords        <  "dump" / "var"
 # Grammars
-    DumpStatement   < "dump" ";"
-    _EvalUnit       <  VarDeclaration / DumpStatement  # バージョン4で変更
-    Identifier      <  (!Keywords identifier)
-    Integer         <~ digit+
-    VarDeclaration  <  "var" Identifier "=" Integer ";"
+DumpStatement   < "dump" ";"
+_EvalUnit       <  VarDeclaration / DumpStatement  # バージョン4で変更
+Identifier      <  (!Keywords identifier)
+Integer         <~ digit+
+VarDeclaration  <  "var" Identifier "=" Integer ";"
 # Spacing
-    Comment1        <~ "/*" (!"*/" .)* "*/"
-    Comment2        <~ "//" (!endOfLine .)* :endOfLine
-    Spacing         <- (blank / Comment1 / Comment2)*
+Comment1        <~ "/*" (!"*/" .)* "*/"
+Comment2        <~ "//" (!endOfLine .)* :endOfLine
+Spacing         <- (blank / Comment1 / Comment2)*
 `;
 mixin(grammar(Lang1Grammar));
 
@@ -28,7 +28,7 @@ var y = 5678;
 dump;
 `;
 
-long[string] var_tbl;
+//long[string] var_tbl;
 
 void main(string[] args)
 {
@@ -40,6 +40,9 @@ void main(string[] args)
     enum string code = compile(Lang1Source);
     writeln(code);
     run!code();
+	writeln("kanji=漢字");
+	import runtime;
+	writeln(rt_add2(11, 22));
 }
 
 string compile(string src)
@@ -47,28 +50,28 @@ string compile(string src)
     import std.format;
     ParseTree pt = Lang1(src);
     pt.cutNodes();
-    string result = "import std.conv, std.stdio;\n";
+    string result = "import runtime;\n";
     for (size_t i = 0; i < pt.children.length; i++)
     {
         ParseTree* unit = &(pt.children[i]);
         switch (unit.name)
         {
-        case `Lang1.VarDeclaration`:
-            {
-                string var_name = unit.children[0].matches[0];
-                long var_value = to!long(unit.children[1].matches[0]);
-                result ~= format!"var_tbl[`%s`] = %d;\n"(var_name, var_value);
-            }
-            break;
-        case `Lang1.DumpStatement`:
-            {
-                result ~= "writeln(var_tbl);\n";
-            }
-            break;
-        case `Lang1.StatementBlock`:
-            break;
-        default:
-            break;
+            case `Lang1.VarDeclaration`:
+                {
+                    string var_name = unit.children[0].matches[0];
+                    long var_value = to!long(unit.children[1].matches[0]);
+                    result ~= format!"rt_def_var(`%s`, %d);\n"(var_name, var_value);
+                }
+                break;
+            case `Lang1.DumpStatement`:
+                {
+                    result ~= "rt_dump();\n";
+                }
+                break;
+            case `Lang1.StatementBlock`:
+                break;
+            default:
+                break;
         }
     }
     return result;
