@@ -37,24 +37,16 @@ void main(string[] args)
     pt.cutNodes(); // バージョン4で追加
     writeln(pt);
     // これ以降を追加(バージョン3)
-    //string code0 = compile(pt);
-    //writeln(code0);
-    enum ParseTree pt0 = parse(Lang1Source);
-    enum string code = compile(pt0);
+    enum string code = compile(Lang1Source);
     writeln(code);
     run!code();
 }
 
-pragma(inline) ParseTree parse(string src)
-{
-    ParseTree pt = Lang1(src);
-    pt.cutNodes();
-    return pt;
-}
-
-string compile(ParseTree pt)
+string compile(string src)
 {
     import std.format;
+    ParseTree pt = Lang1(src);
+    pt.cutNodes();
     string result = "import std.conv, std.stdio;\n";
     for (size_t i = 0; i < pt.children.length; i++)
     {
