@@ -106,11 +106,44 @@ void register(TypeInfo t)
     writeln(a.yyy);
     writeln(cast(long) a.yyy);
     test_script();
+
+    import var2;
+
+    var2 x1 = 123.45;
+    writeln(x1.get!long);
+    writeln(x1.get!real);
+    writeln(x1.get!string);
+    var2 x2 = 123;
+    writeln(x2.get!long);
+    writeln(x2.get!real);
+    writeln(x2.get!string);
+    var2 x3 = &add2;
+    writeln(x3.get!long);
+    writeln(x3.get!real);
+    writeln(x3.get!string);
+    var2 answer = x3(11, 22);
+    writeln(`answer=`, answer);
+    var2 v;
+    v = `abc`;
+    writeln("[v(1)]");
+    writeln(v.get!long);
+    writeln(v.get!real);
+    writeln(v.get!string);
+    var2[string] obj;
+    obj[`a`] = `abc`;
+    obj[`b`] = 123.45;
+    v = obj;
+    writeln("[v(2)]");
+    writeln(v.get!long);
+    writeln(v.get!real);
+    writeln(v.get!string);
+    writeln(v.get!(var2[string]));
+
 }
 
 int add2(int a, int b)
 {
-    return a+b;
+    return a + b;
 }
 
 void test_script()
