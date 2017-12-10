@@ -244,7 +244,6 @@ public struct var2
         return this;
     }
 
-    /+
     // obj.prop;
     public @property ref var2 opDispatch(string name, string file = __FILE__, size_t line = __LINE__)()
     {
@@ -333,7 +332,7 @@ public struct var2
         var2* n = new var2;
         return *n;
     }
-+/
+
     public string toString()
     {
         //return "<vec2>";
