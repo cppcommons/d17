@@ -107,7 +107,7 @@ void register(TypeInfo t)
     writeln(cast(long) a.yyy);
     test_script();
 
-    import var2;
+    import var2mod;
 
     var2 x1 = 123.45;
     writeln(x1.get!long);
@@ -155,7 +155,7 @@ void register(TypeInfo t)
     var2 arg1 = 22;
     var2 arg2 = 33;
     args ~= arg1;
-    args ~= arg2;
+    args ~= var2(44);
     var2 answer2 = x3.apply(args);
     writeln(answer2);
 }

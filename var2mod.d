@@ -1,4 +1,4 @@
-module var2;
+module var2mod;
 
 import std.stdio;
 import std.array;
@@ -10,7 +10,6 @@ import std.variant;
 
 public struct var2
 {
-    ////alias var2 delegate(var2, var2[]) FuncType;
     alias var2 delegate(var2[]) FuncType;
     public enum Type
     {
@@ -22,14 +21,12 @@ public struct var2
         Function,
         Boolean
     }
-
     private Type _type;
     private Variant _payload;
     public Type payloadType()
     {
         return _type;
     }
-
     public this(T)(T t)
     {
         static if (is(T == var2))
@@ -37,8 +34,6 @@ public struct var2
         else
             this.opAssign(t);
     }
-
-    ////public var2 apply(var2 _this, var2[] args)
     public var2 apply(var2[] args)
     {
         if (this.payloadType() == Type.Function)
@@ -100,7 +95,7 @@ public struct var2
             static if (is(T == bool))
                 return this._payload._boolean;
             else static if (isFloatingPoint!T || isIntegral!T)
-                return cast(T)(this._payload.get!bool ? 1 : 0); // the cast is for enums, I don't like this so FIXME
+                return cast(T)(this._payload.get!bool ? 1 : 0);
             else static if (isSomeString!T)
                 return this._payload.get!bool ? "true" : "false";
             else
@@ -115,52 +110,6 @@ public struct var2
                         ret[to!(KeyType!T)(k)] = v.get!(ValueType!T);
                 }
                 return ret;
-            }
-            /+
-            else static if (is(T : PrototypeObject))
-            {
-                // they are requesting an implementation object, just give it to them
-                return cast(T) this._payload._object;
-            }
-            +/
-            else static if (is(T == struct) || is(T == class))
-            {
-                // first, we'll try to give them back the native object we have, if we have one
-                static if (is(T : Object))
-                {
-                    if (auto wno = cast(WrappedNativeObject) this._payload._object)
-                    {
-                        auto no = cast(T) wno.getObject();
-                        if (no !is null)
-                            return no;
-                    }
-
-                    // FIXME: this is kinda weird.
-                    return null;
-                }
-                else
-                {
-
-                    // failing that, generic struct or class getting: try to fill in the fields by name
-                    T t;
-                    bool initialized = true;
-                    static if (is(T == class))
-                    {
-                        static if (__traits(compiles, new T()))
-                            t = new T();
-                        else
-                            initialized = false;
-                    }
-
-                    if (initialized)
-                        foreach (i, a; t.tupleof)
-                        {
-                            cast(Unqual!(typeof((a)))) t.tupleof[i] = this[t.tupleof[i].stringof[2 .. $]].get!(
-                                    typeof(a));
-                        }
-
-                    return t;
-                }
             }
             else static if (isSomeString!T)
             {
@@ -224,37 +173,11 @@ public struct var2
             }
             else
                 return T.init;
-            // is it sane to translate anything else?
         case Type.Function:
             static if (isSomeString!T)
                 return "<function>";
-            else static if (isDelegate!T)
-            {
-                // making a local copy because otherwise the delegate might refer to a struct on the stack and get corrupted later or something
-                auto func = this._payload._function;
-
-                // the static helper lets me pass specific variables to the closure
-                static T helper(typeof(func) func)
-                {
-                    return delegate ReturnType!T(ParameterTypeTuple!T args) {
-                        var[] arr;
-                        foreach (arg; args)
-                            arr ~= var(arg);
-                        var ret = func(var(null), arr);
-                        static if (is(ReturnType!T == void))
-                            return;
-                        else
-                            return ret.get!(ReturnType!T);
-                    };
-                }
-
-                return helper(func);
-
-            }
             else
                 return T.init;
-            // FIXME: we just might be able to do better for both of these
-            //break;
         }
     }
 
