@@ -28,12 +28,14 @@ var y = 5678;
 dump;
 `;
 
-class A {
+class A
+{
     public int a;
     string b;
 }
 
-struct B {
+struct B
+{
     public int a;
     string b;
 }
@@ -51,6 +53,7 @@ void main(string[] args)
     run!code();
     writeln("kanji=漢字");
     import runtime;
+
     writeln(rt_add2(11, 22));
     register(typeid(A));
     register(typeid(B));
@@ -59,17 +62,48 @@ void main(string[] args)
 void register(TypeInfo t)
 {
     import std.traits;
+
     writeln(t.toString);
     Object o = Object.factory(t.toString);
     writeln(o);
     //const(OffsetTypeInfo)[] tiList = t.classinfo.offTi();
     const(OffsetTypeInfo)[] tiList = t.offTi();
     writeln(tiList);
+    import arsd.jsvar;
+
+    var a = 10;
+    var b = a - 5;
+    a = [1, 2, 3];
+    a[1] = "two";
+    writeln(a);
+
+    int xxx = 123;
+
+    a = json!q{
+		"foo":{"bar":100},
+		"joe":"joesph"
+	};
+
+    a.xxx = long.max;
+    a.yyy = cast(real)long.max;
+
+    writeln(a.joe);
+    a.foo.bar += 55;
+    b = a;
+    writeln(b.foo.bar);
+
+    var c = (var d) { writeln("hello, ", d, "!"); };
+    c("adr");
+    c(100);
+    writeln(a);
+    writeln(a.yyy);
+    writeln(cast(long)a.yyy);
 }
 
 string compile(string src)
 {
     import std.format;
+
     ParseTree pt = Lang1(src);
     pt.cutNodes();
     string result = "import runtime;\n";
@@ -78,27 +112,28 @@ string compile(string src)
         ParseTree* unit = &(pt.children[i]);
         switch (unit.name)
         {
-            case `Lang1.VarDeclaration`:
-                {
-                    string var_name = unit.children[0].matches[0];
-                    long var_value = to!long(unit.children[1].matches[0]);
-                    result ~= format!"rt_def_var(`%s`, %d);\n"(var_name, var_value);
-                }
-                break;
-            case `Lang1.DumpStatement`:
-                {
-                    result ~= "rt_dump();\n";
-                }
-                break;
-            case `Lang1.StatementBlock`:
-                break;
-            default:
-                break;
+        case `Lang1.VarDeclaration`:
+            {
+                string var_name = unit.children[0].matches[0];
+                long var_value = to!long(unit.children[1].matches[0]);
+                result ~= format!"rt_def_var(`%s`, %d);\n"(var_name, var_value);
+            }
+            break;
+        case `Lang1.DumpStatement`:
+            {
+                result ~= "rt_dump();\n";
+            }
+            break;
+        case `Lang1.StatementBlock`:
+            break;
+        default:
+            break;
         }
     }
     return result;
 }
 
-void run(string code)() {
+void run(string code)()
+{
     mixin(code);
 }
