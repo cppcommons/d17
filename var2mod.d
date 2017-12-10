@@ -10,7 +10,6 @@ import std.variant;
 
 public struct var2
 {
-    alias var2 delegate(var2[]) FuncType;
     public enum Type
     {
         Object,
@@ -34,29 +33,23 @@ public struct var2
         else
             this.opAssign(t);
     }
+
+    alias var2 delegate(var2[]) FuncType;
     public var2 apply(var2[] args)
     {
         if (this.payloadType() == Type.Function)
         {
+            /+
             if (this._payload.get!FuncType is null)
             {
                 return var2(null);
             }
+            +/
             FuncType func = this._payload.get!FuncType;
-            ////return func(_this, args);
             return func(args);
         }
-
-        if (this.payloadType() == Type.Integral || this.payloadType() == Type.Floating)
-        {
-            if (args.length)
-                return var2(this.get!real * args[0].get!real);
-        }
-
         return var2(null);
     }
-
-    ////public var2 call(T...)(var2 _this, T t)
     public var2 call(T...)(T t)
     {
         var2[] args;
@@ -64,13 +57,10 @@ public struct var2
         {
             args ~= var2(a);
         }
-        ////return this.apply(_this, args);
         return this.apply(args);
     }
-
     public var2 opCall(T...)(T t)
     {
-        ////return this.call(this, t);
         return this.call(t);
     }
 
@@ -93,7 +83,7 @@ public struct var2
         {
         case Type.Boolean:
             static if (is(T == bool))
-                return this._payload._boolean;
+                return this._payload.get!bool;
             else static if (isFloatingPoint!T || isIntegral!T)
                 return cast(T)(this._payload.get!bool ? 1 : 0);
             else static if (isSomeString!T)

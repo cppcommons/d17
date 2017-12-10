@@ -149,6 +149,7 @@ void register(TypeInfo t)
     writeln(v);
     v = true;
     writeln(v);
+    writeln(v.get!bool);
     var v2;
     writeln(v2);
     var2[] args;
