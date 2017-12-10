@@ -69,7 +69,9 @@ void register(TypeInfo t)
     //const(OffsetTypeInfo)[] tiList = t.classinfo.offTi();
     const(OffsetTypeInfo)[] tiList = t.offTi();
     writeln(tiList);
-    import os1.lang.jsvar;
+
+    //import os1.lang.jsvar;
+    import os1.lang;
 
     var a = 10;
     var b = a - 5;
@@ -112,7 +114,8 @@ int add2(int a, int b)
 
 void test_script()
 {
-    import os1.lang.script;
+    //import os1.lang.script;
+    import os1.lang;
 
     writeln(interpret("x*x + 3*x;", var(["x" : 3])));
     var env = var.emptyObject;
