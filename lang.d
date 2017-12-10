@@ -71,7 +71,8 @@ void register(TypeInfo t)
     writeln(tiList);
 
     //import os1.lang.jsvar;
-    import os1.lang;
+    //import os1.lang;
+    import arsd.jsvar;
 
     var a = 10;
     var b = a - 5;
@@ -115,7 +116,8 @@ int add2(int a, int b)
 void test_script()
 {
     //import os1.lang.script;
-    import os1.lang;
+    //import os1.lang;
+    import arsd.script;
 
     writeln(interpret("x*x + 3*x;", var(["x" : 3])));
     var env = var.emptyObject;
