@@ -136,11 +136,10 @@ public struct var2
             else
                 return T.init;
         case Type.Array:
-
-            auto pl = this._payload.get!(var2[]);
+            Vector vec = this._payload.get!Vector;
             static if (isSomeString!T)
             {
-                return to!string(pl);
+                return to!string(vec);
             }
             else static if (isArray!T)
             {
@@ -151,7 +150,7 @@ public struct var2
                 else
                 {
                     alias getType = ElementType!T;
-                    foreach (item; pl)
+                    foreach (item; vec._array)
                         ret ~= item.get!(getType);
                 }
                 return ret;
@@ -218,15 +217,6 @@ public struct var2
         }
         else static if (isArray!T)
         {
-            /+
-            this._type = Type.Array;
-            var2[] arr;
-            arr.length = t.length;
-            static if (!is(T == void[]))
-                foreach (i, item; t)
-                    arr[i] = var2(item);
-            this._payload = arr;
-            +/
             this._type = Type.Array;
             Vector vec = new Vector;
             vec._array.length = t.length;
