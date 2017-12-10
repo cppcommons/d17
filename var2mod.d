@@ -12,7 +12,7 @@ public struct var2
     public enum Type
     {
         Object,
-        ////Array,
+        Array,
         Integral,
         Floating,
         String,
@@ -133,19 +133,13 @@ public struct var2
             }
             else
                 return T.init;
-            /+
         case Type.Array:
-            //auto pl = this._payload.get!(var2[]);
+            Vector vec = this._payload.get!Vector;
             static if (isSomeString!T)
             {
-                writeln(`AAA`);
-            auto pl = this._payload.get!(var2[]);
-                writeln(`pl=`, to!string(pl));
-                return to!string(pl);
-                //return T.init;
+                return vec.toString;
             }
-            else 
-            static if (isArray!T)
+            else static if (isArray!T)
             {
                 T ret;
                 static if (is(ElementType!T == void))
@@ -153,7 +147,7 @@ public struct var2
                 }
                 else
                 {
-                    Vector vec = this._payload.get!Vector;
+                    ////Vector vec = this._payload.get!Vector;
                     alias ElemType = ElementType!T;
                     foreach (item; vec._array)
                         ret ~= item.get!(ElemType);
@@ -162,7 +156,6 @@ public struct var2
             }
             else
                 return T.init;
-        +/
         case Type.Function:
             static if (isSomeString!T)
                 return "<function>";
@@ -223,7 +216,6 @@ public struct var2
         }
         else static if (isArray!T)
         {
-            /+
             this._type = Type.Array;
             Vector vec = new Vector;
             vec._array.length = t.length;
@@ -231,7 +223,6 @@ public struct var2
                 foreach (i, item; t)
                     vec._array[i] = var2(item);
             this._payload = vec;
-            +/
         }
         else static if (is(T == bool))
         {
@@ -266,7 +257,6 @@ public struct var2
             *tmp = _payload.get!string.length;
             return *tmp;
         }
-        /+
         if (name == "length" && this.payloadType() == Type.Array)
         {
             Vector vec = this._payload.get!Vector;
@@ -274,7 +264,6 @@ public struct var2
             *tmp = vec._array.length;
             return *tmp;
         }
-        +/
         if (this.payloadType() == Type.Object)
         {
             Dictionary aa = this._payload.get!Dictionary;
@@ -304,14 +293,12 @@ public struct var2
     // N.T.
     public ref var2 opIndex(size_t idx, string file = __FILE__, size_t line = __LINE__)
     {
-        /+
         if (_type == Type.Array)
         {
             Vector vec = this._payload.get!Vector;
             if (idx < vec._array.length)
                 return vec._array[idx];
         }
-        +/
         var2* n = new var2;
         return *n;
     }
@@ -319,7 +306,6 @@ public struct var2
     // N.T.
     public ref var2 opIndexAssign(T)(T t, size_t idx, string file = __FILE__, size_t line = __LINE__)
     {
-        /+
         if (this._type == Type.Array)
         {
             Vector vec = this._payload.get!Vector;
@@ -328,7 +314,6 @@ public struct var2
             vec._array[idx] = t;
             return vec._array[idx];
         }
-        +/
         var2* n = new var2;
         return *n;
     }
