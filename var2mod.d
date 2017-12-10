@@ -270,8 +270,9 @@ public struct var2
         }
         if (name == "length" && this.payloadType() == Type.Array)
         {
+            Vector vec = this._payload.get!Vector;
             var2* tmp = new var2;
-            *tmp = _payload.get!(var2[]).length;
+            *tmp = vec._array.length;
             return *tmp;
         }
         if (this.payloadType() == Type.Object)
@@ -305,9 +306,9 @@ public struct var2
     {
         if (_type == Type.Array)
         {
-            auto arr = this._payload.get!(var2[]);
-            if (idx < arr.length)
-                return arr[idx];
+            Vector vec = this._payload.get!Vector;
+            if (idx < vec._array.length)
+                return vec._array[idx];
         }
         var2* n = new var2;
         return *n;
