@@ -186,10 +186,8 @@ public struct var2
         else static if (isCallable!T)
         {
             this._type = Type.Function;
-            ////this._payload = delegate var2(var2 _this, var2[] args) {
             this._payload = delegate var2(var2[] args) {
                 var2 ret;
-
                 ParameterTypeTuple!T fargs;
                 foreach (idx, a; fargs)
                 {
@@ -197,7 +195,6 @@ public struct var2
                         break;
                     cast(Unqual!(typeof(a))) fargs[idx] = args[idx].get!(typeof(a));
                 }
-
                 static if (is(ReturnType!t == void))
                 {
                     t(fargs);
@@ -206,7 +203,6 @@ public struct var2
                 {
                     ret = t(fargs);
                 }
-
                 return ret;
             };
         }
@@ -215,11 +211,8 @@ public struct var2
             this._type = Type.String;
             this._payload = to!string(t);
         }
-        //else static if (is(T : PrototypeObject))
         else static if (is(T : var2[string]))
         {
-            // support direct assignment of pre-made implementation objects
-            // so prewrapped stuff can be easily passed.
             this._type = Type.Object;
             this._payload = t;
         }
@@ -228,7 +221,7 @@ public struct var2
             this._type = Type.Array;
             var2[] arr;
             arr.length = t.length;
-            static if (!is(T == void[])) // we can't append a void array but it is nice to support x = [];
+            static if (!is(T == void[]))
                 foreach (i, item; t)
                     arr[i] = var2(item);
             this._payload = arr;
@@ -238,18 +231,6 @@ public struct var2
             this._type = Type.Boolean;
             this._payload = t;
         }
-        /+
-        else static if (isSomeChar!T)
-        {
-            this._type = Type.String;
-            this._payload._string = "";
-            import std.utf;
-
-            char[4] ugh;
-            auto size = encode(ugh, t);
-            this._payload._string = ugh[0 .. size].idup;
-        }
-        +/
         else
             static assert(0, "unsupported type");
 
