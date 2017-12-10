@@ -105,6 +105,11 @@ void register(TypeInfo t)
     test_script();
 }
 
+int add2(int a, int b)
+{
+    return a+b;
+}
+
 void test_script()
 {
     import os1.lang.script;
@@ -113,9 +118,14 @@ void test_script()
     var env = var.emptyObject;
     env["x"] = long.max;
     env["y"] = `abc`;
+    env["a"] = 11;
+    env["b"] = 22;
+    env[`add2`] = &add2;
     writeln(env);
     writeln(interpret("y", env));
     writeln(interpret("var z=x;", env));
+    writeln(env);
+    writeln(interpret("var a=add2(a,b);", env));
     writeln(env);
 }
 
