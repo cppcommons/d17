@@ -168,6 +168,9 @@ void register(TypeInfo t)
     writeln(aa.get!(var2[string]));
     writeln(aa);
     writeln(aa[`x`]);
+    aa.yyy = 777;
+    writeln(aa);
+    writeln(aa.yyy);
 }
 
 int add2(int a, int b)
