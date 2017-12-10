@@ -32,17 +32,11 @@ public struct var2
             this.opAssign(t);
     }
 
-    alias var2 delegate(var2[]) FuncType;
     public var2 apply(var2[] args)
     {
         if (this.payloadType() == Type.Function)
         {
-            /+
-            if (this._payload.get!FuncType is null)
-            {
-                return var2(null);
-            }
-            +/
+            alias var2 delegate(var2[]) FuncType;
             FuncType func = this._payload.get!FuncType;
             return func(args);
         }
