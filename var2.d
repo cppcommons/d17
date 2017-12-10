@@ -10,7 +10,8 @@ import std.variant;
 
 public struct var2
 {
-    alias var2 delegate(var2, var2[]) FuncType;
+    ////alias var2 delegate(var2, var2[]) FuncType;
+    alias var2 delegate(var2[]) FuncType;
     public enum Type
     {
         Object,
@@ -37,7 +38,8 @@ public struct var2
             this.opAssign(t);
     }
 
-    public var2 apply(var2 _this, var2[] args)
+    ////public var2 apply(var2 _this, var2[] args)
+    public var2 apply(var2[] args)
     {
         if (this.payloadType() == Type.Function)
         {
@@ -46,7 +48,8 @@ public struct var2
                 return var2(null);
             }
             FuncType func = this._payload.get!FuncType;
-            return func(_this, args);
+            ////return func(_this, args);
+            return func(args);
         }
 
         if (this.payloadType() == Type.Integral || this.payloadType() == Type.Floating)
@@ -58,19 +61,22 @@ public struct var2
         return var2(null);
     }
 
-    public var2 call(T...)(var2 _this, T t)
+    ////public var2 call(T...)(var2 _this, T t)
+    public var2 call(T...)(T t)
     {
         var2[] args;
         foreach (a; t)
         {
             args ~= var2(a);
         }
-        return this.apply(_this, args);
+        ////return this.apply(_this, args);
+        return this.apply(args);
     }
 
     public var2 opCall(T...)(T t)
     {
-        return this.call(this, t);
+        ////return this.call(this, t);
+        return this.call(t);
     }
 
     public T get(T)() if (!is(T == void))
@@ -267,7 +273,8 @@ public struct var2
         else static if (isCallable!T)
         {
             this._type = Type.Function;
-            this._payload = delegate var2(var2 _this, var2[] args) {
+            ////this._payload = delegate var2(var2 _this, var2[] args) {
+            this._payload = delegate var2(var2[] args) {
                 var2 ret;
 
                 ParameterTypeTuple!T fargs;

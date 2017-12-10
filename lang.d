@@ -151,6 +151,13 @@ void register(TypeInfo t)
     writeln(v);
     var v2;
     writeln(v2);
+    var2[] args;
+    var2 arg1 = 22;
+    var2 arg2 = 33;
+    args ~= arg1;
+    args ~= arg2;
+    var2 answer2 = x3.apply(args);
+    writeln(answer2);
 }
 
 int add2(int a, int b)
