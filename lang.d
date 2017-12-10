@@ -132,7 +132,7 @@ void register(TypeInfo t)
     var2[string] obj;
     obj[`a`] = `abc`;
     obj[`b`] = 123.45;
-    v = obj;
+    v = &obj;
     writeln("[v(2)]");
     writeln(v.get!long);
     writeln(v.get!real);
@@ -161,6 +161,13 @@ void register(TypeInfo t)
     writeln(answer2);
     answer2 = x3.apply([var2(1), var2(22)]);
     writeln(answer2);
+
+    var2[] _aa;
+    var2 aa = _aa;
+    aa[`x`] = 123;
+    writeln(aa.get!(var2[string]));
+    writeln(aa);
+    writeln(aa[`x`]);
 }
 
 int add2(int a, int b)

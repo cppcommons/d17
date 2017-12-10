@@ -1,6 +1,7 @@
 module var2mod;
 
 import std.conv;
+import std.format;
 import std.traits;
 import std.variant;
 
@@ -88,9 +89,10 @@ public struct var2
             static if (isAssociativeArray!T)
             {
                 T ret;
-                if (this._payload.type == typeid(var2[string]))
+                if (this._payload.type == typeid(var2[string]*))
                 {
-                    foreach (k, v; this._payload.get!(var2[string]))
+                    var2[string]* aa = this._payload.get!(var2[string]*);
+                    foreach (k, v; (*aa))
                         ret[to!(KeyType!T)(k)] = v.get!(ValueType!T);
                 }
                 return ret;
@@ -204,7 +206,7 @@ public struct var2
             this._type = Type.String;
             this._payload = to!string(t);
         }
-        else static if (is(T : var2[string]))
+        else static if (is(T : var2[string]*))
         {
             this._type = Type.Object;
             this._payload = t;
@@ -228,5 +230,158 @@ public struct var2
             static assert(0, "unsupported type");
 
         return this;
+    }
+
+    public @property ref var2 opDispatch(string name, string file = __FILE__, size_t line = __LINE__)()
+    {
+        return this[name];
+    }
+
+    public @property ref var2 opDispatch(string name, string file = __FILE__,
+            size_t line = __LINE__, T)(T r)
+    {
+        return this.opIndexAssign!T(r, name);
+    }
+
+    public ref var2 opIndex(var2 name, string file = __FILE__, size_t line = __LINE__)
+    {
+        return opIndex(name.get!string, file, line);
+    }
+
+    public ref var2 opIndexAssign(T)(T t, var2 name, string file = __FILE__, size_t line = __LINE__)
+    {
+        return opIndexAssign(t, name.get!string, file, line);
+    }
+
+    public ref var2 opIndex(string name, string file = __FILE__, size_t line = __LINE__)
+    {
+        // if name is numeric, we should convert to int
+        if (name.length && name[0] >= '0' && name[0] <= '9')
+            return opIndex(to!size_t(name), file, line);
+
+        if (name == "length" && this.payloadType() == Type.String)
+        {
+            var2* tmp = new var2;
+            *tmp = _payload.get!string.length;
+            return *tmp;
+        }
+        if (name == "length" && this.payloadType() == Type.Array)
+        {
+            var2* tmp = new var2;
+            *tmp = _payload.get!(var2[]).length;
+            return *tmp;
+        }
+        if (this.payloadType() == Type.Object)
+        {
+            var2[string]* tmp = this._payload.get!(var2[string]*);
+            var2* found = name in (*tmp);
+            if (found)
+                return (*found);
+        }
+        var2* tmp = new var2;
+        return *tmp;
+    }
+
+    public ref var2 opIndexAssign(T)(T t, string name, string file = __FILE__, size_t line = __LINE__)
+    {
+        if (name.length && name[0] >= '0' && name[0] <= '9')
+            return opIndexAssign(t, to!size_t(name), file, line);
+        if (this._type != Type.Object)
+        {
+            this._type = Type.Object;
+            var2[string] aa;
+            this._payload = &aa;
+        }
+        var2[string]* aa = this._payload.get!(var2[string]*);
+        (*aa)[name] = var2(t);
+        ////return this._payload.get!(var2[string])[name];
+        var2* n = new var2;
+        return *n;
+    }
+
+    public ref var2 opIndex(size_t idx, string file = __FILE__, size_t line = __LINE__)
+    {
+        if (_type == Type.Array)
+        {
+            auto arr = this._payload.get!(var2[]);
+            if (idx < arr.length)
+                return arr[idx];
+        }
+        /+
+        else if (_type == Type.Object)
+        {
+            // objects might overload opIndex
+            var2* n = new var2;
+            if ("opIndex" in this)
+                *n = this["opIndex"](idx);
+            return *n;
+        }
+        +/
+        var2* n = new var2;
+        return *n;
+    }
+
+    public ref var2 opIndexAssign(T)(T t, size_t idx, string file = __FILE__, size_t line = __LINE__)
+    {
+        if (_type == Type.Array)
+        {
+            //alias arr = this._payload.get!(var2[]);
+            var2[] arr = this._payload.get!(var2[]);
+            if (idx >= arr.length)
+                arr.length = idx + 1;
+            arr[idx] = t;
+            return arr[idx];
+        }
+        var2* n = new var2;
+        return *n;
+    }
+
+    /+
+    public ref var opIndexAssignNoOverload(T)(T t, string name,
+            string file = __FILE__, size_t line = __LINE__)
+    {
+        if (name.length && name[0] >= '0' && name[0] <= '9')
+            return opIndexAssign(t, to!size_t(name), file, line);
+        _requireType(Type.Object); // FIXME?
+        if (_payload._object is null)
+            throw new DynamicTypeException(var(null), Type.Object, file, line);
+
+        return this._payload._object._setMember(name, var(t), false, false, true, file, line);
+    }
+    +/
+
+    /+
+    ref var2 _getOwnProperty(string name, string file = __FILE__, size_t line = __LINE__)
+    {
+        if (this._type == Type.Object)
+        {
+            var2* peek = name in this._payload.get!(var2[string]);
+            if (peek !is null)
+                return *peek;
+        }
+        var2* n = new var2;
+        return *n;
+    }
+    +/
+    public string toString()
+    {
+        if (this._type == Type.Object)
+        {
+            import std.stdio;
+            //var2[string]* aa = this._payload.get!(var2[string]*);
+            //if (!aa)
+            writeln(`is object!`);
+            var2[string] aa = this.get!(var2[string]);
+
+            writeln(`aa=`, aa);
+            //return to!string(this._type) ~ format!`%s`(aa);
+            foreach (k, v; aa)
+            {
+                import std.stdio;
+
+                writeln(k, ":", v, " ");
+            }
+        }
+        return to!string(this._type) ~ `=` ~ this._payload.toString;
     }
 }
