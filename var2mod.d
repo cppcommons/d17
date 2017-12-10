@@ -150,9 +150,10 @@ public struct var2
                 }
                 else
                 {
-                    alias getType = ElementType!T;
-                    foreach (item; pl)
-                        ret ~= item.get!(getType);
+                    Vector vec = this._payload.get!Vector;
+                    alias ElemType = ElementType!T;
+                    foreach (item; vec._array)
+                        ret ~= item.get!(ElemType);
                 }
                 return ret;
             }
