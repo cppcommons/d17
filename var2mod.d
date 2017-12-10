@@ -12,7 +12,7 @@ public struct var2
     public enum Type
     {
         Object,
-        Array,
+        ////Array,
         Integral,
         Floating,
         String,
@@ -105,8 +105,7 @@ public struct var2
                 return T.init;
         case Type.Integral:
             long val = this._payload.get!long;
-            static if (isFloatingPoint!T
-                    || isIntegral!T)
+            static if (isFloatingPoint!T || isIntegral!T)
                 return to!T(val);
             else static if (isSomeString!T)
                 return to!string(val);
@@ -114,8 +113,7 @@ public struct var2
                 return T.init;
         case Type.Floating:
             real val = this._payload.get!real;
-            static if (isFloatingPoint!T
-                    || isIntegral!T)
+            static if (isFloatingPoint!T || isIntegral!T)
                 return to!T(val);
             else static if (isSomeString!T)
                 return to!string(val);
@@ -135,6 +133,7 @@ public struct var2
             }
             else
                 return T.init;
+            /+
         case Type.Array:
             //auto pl = this._payload.get!(var2[]);
             static if (isSomeString!T)
@@ -163,6 +162,7 @@ public struct var2
             }
             else
                 return T.init;
+        +/
         case Type.Function:
             static if (isSomeString!T)
                 return "<function>";
@@ -223,6 +223,7 @@ public struct var2
         }
         else static if (isArray!T)
         {
+            /+
             this._type = Type.Array;
             Vector vec = new Vector;
             vec._array.length = t.length;
@@ -230,6 +231,7 @@ public struct var2
                 foreach (i, item; t)
                     vec._array[i] = var2(item);
             this._payload = vec;
+            +/
         }
         else static if (is(T == bool))
         {
@@ -242,6 +244,7 @@ public struct var2
         return this;
     }
 
+    /+
     // obj.prop;
     public @property ref var2 opDispatch(string name, string file = __FILE__, size_t line = __LINE__)()
     {
@@ -264,6 +267,7 @@ public struct var2
             *tmp = _payload.get!string.length;
             return *tmp;
         }
+        /+
         if (name == "length" && this.payloadType() == Type.Array)
         {
             Vector vec = this._payload.get!Vector;
@@ -271,6 +275,7 @@ public struct var2
             *tmp = vec._array.length;
             return *tmp;
         }
+        +/
         if (this.payloadType() == Type.Object)
         {
             Dictionary aa = this._payload.get!Dictionary;
@@ -300,12 +305,14 @@ public struct var2
     // N.T.
     public ref var2 opIndex(size_t idx, string file = __FILE__, size_t line = __LINE__)
     {
+        /+
         if (_type == Type.Array)
         {
             Vector vec = this._payload.get!Vector;
             if (idx < vec._array.length)
                 return vec._array[idx];
         }
+        +/
         var2* n = new var2;
         return *n;
     }
@@ -313,6 +320,7 @@ public struct var2
     // N.T.
     public ref var2 opIndexAssign(T)(T t, size_t idx, string file = __FILE__, size_t line = __LINE__)
     {
+        /+
         if (this._type == Type.Array)
         {
             Vector vec = this._payload.get!Vector;
@@ -321,8 +329,22 @@ public struct var2
             vec._array[idx] = t;
             return vec._array[idx];
         }
+        +/
         var2* n = new var2;
         return *n;
+    }
++/
+    public string toString()
+    {
+        //return "<vec2>";
+        switch (this._type)
+        {
+        case Type.Object:
+            return `[Object] ` ~ to!string(this._payload.get!Dictionary);
+        default:
+            return to!string(this._type) ~ `(` ~ this._payload.toString ~ `)`;
+            //break;
+        }
     }
 }
 
@@ -331,7 +353,8 @@ package class Dictionary
     var2[string] _dict;
     public override string toString()
     {
-        return format!`%s`(this._dict);
+        //return format!`%s`(this._dict);
+        return to!string(this._dict);
     }
 }
 
