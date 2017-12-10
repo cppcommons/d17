@@ -328,3 +328,12 @@ package class Dictionary
         return format!`%s`(this._dict);
     }
 }
+
+package class Vector
+{
+    var2[] _array;
+    public override string toString()
+    {
+        return format!`%s`(this._array);
+    }
+}
