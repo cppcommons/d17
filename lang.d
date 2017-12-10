@@ -121,7 +121,7 @@ void register(TypeInfo t)
     writeln(x3.get!long);
     writeln(x3.get!real);
     writeln(x3.get!string);
-    var2 answer = x3(11, 22);
+    var2 answer = x3(11, 22.5);
     writeln(`answer=`, answer);
     var2 v;
     v = `abc`;
@@ -138,7 +138,15 @@ void register(TypeInfo t)
     writeln(v.get!real);
     writeln(v.get!string);
     writeln(v.get!(var2[string]));
-
+    //A _a = new A;
+    //v = _a;
+    //B _b;
+    //v = _b;
+    int[] i;
+    i ~= 1;
+    i ~= 2;
+    v = i;
+    writeln(v);
 }
 
 int add2(int a, int b)

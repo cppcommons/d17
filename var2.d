@@ -303,57 +303,22 @@ public struct var2
             this._type = Type.Object;
             this._payload = t;
         }
-        else static if (is(T == class))
-        {
-            // auto-wrap other classes with reference semantics
-            this._type = Type.Object;
-            this._payload._object = wrapNativeObject(t);
-        }
-        else static if (is(T == struct) || isAssociativeArray!T)
-        {
-            // copy structs and assoc arrays by value into a var object
-            this._type = Type.Object;
-            auto obj = new PrototypeObject();
-            this._payload._object = obj;
-
-            static if (is(T == struct))
-                foreach (member; __traits(allMembers, T))
-                    {
-                    static if (__traits(compiles, __traits(getMember, t, member)))
-                        {
-                        static if (is(typeof(__traits(getMember, t, member)) == function))
-                            {
-                            // skipping these because the delegate we get isn't going to work anyway; the object may be dead and certainly won't be updated
-                            //this[member] = &__traits(getMember, proxyObject, member);
-                        }
-                        else
-                            this[member] = __traits(getMember, t, member);
-                    }
-                }
-            else
-            {
-                // assoc array
-                foreach (l, v; t)
-                {
-                    this[var(l)] = var(v);
-                }
-            }
-        }
         else static if (isArray!T)
         {
             this._type = Type.Array;
-            var[] arr;
+            var2[] arr;
             arr.length = t.length;
             static if (!is(T == void[])) // we can't append a void array but it is nice to support x = [];
                 foreach (i, item; t)
-                    arr[i] = var(item);
-            this._payload._array = arr;
+                    arr[i] = var2(item);
+            this._payload = arr;
         }
         else static if (is(T == bool))
         {
             this._type = Type.Boolean;
             this._payload._boolean = t;
         }
+        /+
         else static if (isSomeChar!T)
         {
             this._type = Type.String;
@@ -363,7 +328,10 @@ public struct var2
             char[4] ugh;
             auto size = encode(ugh, t);
             this._payload._string = ugh[0 .. size].idup;
-        } // else static assert(0, "unsupported type");
+        }
+        +/
+        else
+            static assert(0, "unsupported type");
 
         return this;
     }
