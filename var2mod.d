@@ -104,19 +104,21 @@ public struct var2
             else
                 return T.init;
         case Type.Integral:
+            long val = this._payload.get!long;
             static if (isFloatingPoint!T
                     || isIntegral!T)
-                return to!T(this._payload.get!long);
+                return to!T(val);
             else static if (isSomeString!T)
-                return to!string(this._payload.get!long);
+                return to!string(val);
             else
                 return T.init;
         case Type.Floating:
+            real val = this._payload.get!real;
             static if (isFloatingPoint!T
                     || isIntegral!T)
-                return to!T(this._payload.get!real);
+                return to!T(val);
             else static if (isSomeString!T)
-                return to!string(this._payload.get!real);
+                return to!string(val);
             else
                 return T.init;
         case Type.String:
@@ -272,9 +274,7 @@ public struct var2
         if (this.payloadType() == Type.Object)
         {
             Dictionary aa = this._payload.get!Dictionary;
-            writefln(`aa=%s`, aa);
             var2* found = name in aa._dict;
-            writefln(`found=%s`, found);
             if (found)
                 return (*found);
         }
