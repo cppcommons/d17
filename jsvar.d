@@ -158,7 +158,7 @@ version(test_script)
 	}
 version(test_script)
 void main() {
-import arsd.script;
+import os1.lang.script;
 writeln(interpret("x*x + 3*x;", var(["x":3])));
 
 	{
@@ -181,7 +181,7 @@ writeln(interpret("x*x + 3*x;", var(["x":3])));
 	return;
 	*/
 
-	import arsd.script;
+	import os1.lang.script;
 	struct Test {
 		int a = 10;
 		string name = "ten";
@@ -238,7 +238,7 @@ writeln(interpret("x*x + 3*x;", var(["x":3])));
 	globals.c()(10); // call script defined functions in D (note: this runs the interpreter)
 
 	//writeln(globals._getMember("lol", false));
-	return;
+	////return;
 
 	var k,l ;
 
@@ -723,7 +723,7 @@ struct var {
 			case Type.String:
 			case Type.Function:
 				assert(0); // FIXME
-			break;
+			////break;
 			case Type.Integral:
 				return var(-this.get!long);
 			case Type.Floating:

@@ -85,7 +85,7 @@ void register(TypeInfo t)
 	};
 
     a.xxx = long.max;
-    a.yyy = cast(real)long.max;
+    a.yyy = cast(real) long.max;
     writeln(a.zzz);
     assert(a.zzz == var(null));
     a.zzz = var.emptyObject;
@@ -101,7 +101,22 @@ void register(TypeInfo t)
     c(100);
     writeln(a);
     writeln(a.yyy);
-    writeln(cast(long)a.yyy);
+    writeln(cast(long) a.yyy);
+    test_script();
+}
+
+void test_script()
+{
+    import os1.lang.script;
+
+    writeln(interpret("x*x + 3*x;", var(["x" : 3])));
+    var env = var.emptyObject;
+    env["x"] = long.max;
+    env["y"] = `abc`;
+    writeln(env);
+    writeln(interpret("y", env));
+    writeln(interpret("var z=x;", env));
+    writeln(env);
 }
 
 string compile(string src)
