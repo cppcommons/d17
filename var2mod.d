@@ -89,17 +89,17 @@ public struct var2
             else
                 return T.init;
         case Type.Object:
-            Dictionary aa = this._payload.get!Dictionary;
+            Dictionary dict = this._payload.get!Dictionary;
             static if (isAssociativeArray!T)
             {
                 T ret;
-                foreach (k, v; aa._dict)
+                foreach (k, v; dict._dict)
                     ret[to!(KeyType!T)(k)] = v.get!(ValueType!T);
                 return ret;
             }
             else static if (isSomeString!T)
             {
-                return aa.toString;
+                return dict.toString;
             }
             else
                 return T.init;
@@ -149,7 +149,7 @@ public struct var2
                 {
                     ////Vector vec = this._payload.get!Vector;
                     alias ElemType = ElementType!T;
-                    foreach (item; vec._array)
+                    foreach (item; vec._vec)
                         ret ~= item.get!(ElemType);
                 }
                 return ret;
@@ -207,21 +207,21 @@ public struct var2
         else static if (is(T : var2[string]))
         {
             this._type = Type.Object;
-            Dictionary aa = new Dictionary;
+            Dictionary dict = new Dictionary;
             foreach (k, v; cast(var2[string]) t)
             {
-                aa._dict[k] = v;
+                dict._dict[k] = v;
             }
-            this._payload = aa;
+            this._payload = dict;
         }
         else static if (isArray!T)
         {
             this._type = Type.Array;
             Vector vec = new Vector;
-            vec._array.length = t.length;
+            vec._vec.length = t.length;
             static if (!is(T == void[]))
                 foreach (i, item; t)
-                    vec._array[i] = var2(item);
+                    vec._vec[i] = var2(item);
             this._payload = vec;
         }
         else static if (is(T == bool))
@@ -261,13 +261,13 @@ public struct var2
         {
             Vector vec = this._payload.get!Vector;
             var2* tmp = new var2;
-            *tmp = vec._array.length;
+            *tmp = vec._vec.length;
             return *tmp;
         }
         if (this.payloadType() == Type.Object)
         {
-            Dictionary aa = this._payload.get!Dictionary;
-            var2* found = name in aa._dict;
+            Dictionary dict = this._payload.get!Dictionary;
+            var2* found = name in dict._dict;
             if (found)
                 return (*found);
         }
@@ -285,9 +285,9 @@ public struct var2
             this._type = Type.Object;
             this._payload = new Dictionary;
         }
-        Dictionary aa = this._payload.get!Dictionary;
-        aa._dict[name] = var2(t);
-        return aa._dict[name];
+        Dictionary dict = this._payload.get!Dictionary;
+        dict._dict[name] = var2(t);
+        return dict._dict[name];
     }
 
     // N.T.
@@ -296,8 +296,8 @@ public struct var2
         if (_type == Type.Array)
         {
             Vector vec = this._payload.get!Vector;
-            if (idx < vec._array.length)
-                return vec._array[idx];
+            if (idx < vec._vec.length)
+                return vec._vec[idx];
         }
         var2* n = new var2;
         return *n;
@@ -309,10 +309,10 @@ public struct var2
         if (this._type == Type.Array)
         {
             Vector vec = this._payload.get!Vector;
-            if (idx >= vec._array.length)
-                vec._array.length = idx + 1;
-            vec._array[idx] = t;
-            return vec._array[idx];
+            if (idx >= vec._vec.length)
+                vec._vec.length = idx + 1;
+            vec._vec[idx] = t;
+            return vec._vec[idx];
         }
         var2* n = new var2;
         return *n;
@@ -344,9 +344,9 @@ package class Dictionary
 
 package class Vector
 {
-    var2[] _array;
+    var2[] _vec;
     public override string toString()
     {
-        return format!`%s`(this._array);
+        return format!`%s`(this._vec);
     }
 }
