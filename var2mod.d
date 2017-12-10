@@ -320,7 +320,6 @@ public struct var2
 
     public string toString()
     {
-        //return "<vec2>";
         switch (this._type)
         {
         case Type.Object:
@@ -347,6 +346,7 @@ package class Vector
     var2[] _vec;
     public override string toString()
     {
-        return format!`%s`(this._vec);
+        //return format!`%s`(this._vec);
+        return to!string(this._vec);
     }
 }
