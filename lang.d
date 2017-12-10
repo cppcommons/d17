@@ -158,6 +158,8 @@ void register(TypeInfo t)
     args ~= var2(44);
     var2 answer2 = x3.apply(args);
     writeln(answer2);
+    answer2 = x3.apply([var2(1), var2(22)]);
+    writeln(answer2);
 }
 
 int add2(int a, int b)
