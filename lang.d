@@ -28,7 +28,15 @@ var y = 5678;
 dump;
 `;
 
-//long[string] var_tbl;
+class A {
+    public int a;
+    string b;
+}
+
+struct B {
+    public int a;
+    string b;
+}
 
 void main(string[] args)
 {
@@ -38,11 +46,25 @@ void main(string[] args)
     writeln(pt);
     // これ以降を追加(バージョン3)
     enum string code = compile(Lang1Source);
+    pragma(msg, code);
     writeln(code);
     run!code();
-	writeln("kanji=漢字");
-	import runtime;
-	writeln(rt_add2(11, 22));
+    writeln("kanji=漢字");
+    import runtime;
+    writeln(rt_add2(11, 22));
+    register(typeid(A));
+    register(typeid(B));
+}
+
+void register(TypeInfo t)
+{
+    import std.traits;
+    writeln(t.toString);
+    Object o = Object.factory(t.toString);
+    writeln(o);
+    //const(OffsetTypeInfo)[] tiList = t.classinfo.offTi();
+    const(OffsetTypeInfo)[] tiList = t.offTi();
+    writeln(tiList);
 }
 
 string compile(string src)

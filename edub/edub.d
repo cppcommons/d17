@@ -885,7 +885,6 @@ int main(string[] args)
 		writeln(jsonText2);
 		exit(0);
 	}
-	/+
 	if (dub_cmdline.length >= 2 && dub_cmdline[1] == "generate")
 	{
 		chdir(folder_name);
@@ -893,7 +892,6 @@ int main(string[] args)
 		int rc = emake_run_command(dub_cmdline);
 		return rc;
 	}
-	+/
 	dub_cmdline ~= format!`--root=%s`(folder_name);
 	if (run_args)
 	{
