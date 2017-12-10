@@ -218,15 +218,6 @@ public struct var2
         }
         else static if (isArray!T)
         {
-            /+
-            this._type = Type.Array;
-            var2[] arr;
-            arr.length = t.length;
-            static if (!is(T == void[]))
-                foreach (i, item; t)
-                    arr[i] = var2(item);
-            this._payload = arr;
-            +/
             this._type = Type.Array;
             Vector vec = new Vector;
             vec._array.length = t.length;
