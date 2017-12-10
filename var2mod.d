@@ -1,10 +1,6 @@
 module var2mod;
 
-import std.stdio;
-import std.array;
 import std.conv;
-
-//import std.json;
 import std.traits;
 import std.variant;
 
@@ -20,12 +16,14 @@ public struct var2
         Function,
         Boolean
     }
+
     private Type _type;
     private Variant _payload;
     public Type payloadType()
     {
         return _type;
     }
+
     public this(T)(T t)
     {
         static if (is(T == var2))
@@ -50,6 +48,7 @@ public struct var2
         }
         return var2(null);
     }
+
     public var2 call(T...)(T t)
     {
         var2[] args;
@@ -59,6 +58,7 @@ public struct var2
         }
         return this.apply(args);
     }
+
     public var2 opCall(T...)(T t)
     {
         return this.call(t);
@@ -140,7 +140,6 @@ public struct var2
             else
                 return T.init;
         case Type.Array:
-            import std.range;
 
             auto pl = this._payload.get!(var2[]);
             static if (isSomeString!T)
@@ -152,13 +151,13 @@ public struct var2
                 T ret;
                 static if (is(ElementType!T == void))
                 {
-                    static assert(0, "try wrapping the function to get rid of void[] args");
-                    //alias getType = ubyte;
                 }
                 else
+                {
                     alias getType = ElementType!T;
-                foreach (item; pl)
-                    ret ~= item.get!(getType);
+                    foreach (item; pl)
+                        ret ~= item.get!(getType);
+                }
                 return ret;
             }
             else
