@@ -132,7 +132,7 @@ void register(TypeInfo t)
     var2[string] obj;
     obj[`a`] = `abc`;
     obj[`b`] = 123.45;
-    v = &obj;
+    v = obj;
     writeln("[v(2)]");
     writeln(v.get!long);
     writeln(v.get!real);

@@ -88,22 +88,20 @@ public struct var2
             else
                 return T.init;
         case Type.Object:
+            Dictionary aa = this._payload.get!Dictionary;
             static if (isAssociativeArray!T)
             {
                 T ret;
                 if (this._payload.type == typeid(var2[string]*))
                 {
-                    var2[string]* aa = this._payload.get!(var2[string]*);
-                    foreach (k, v; (*aa))
+                    foreach (k, v; aa._dict)
                         ret[to!(KeyType!T)(k)] = v.get!(ValueType!T);
                 }
                 return ret;
             }
             else static if (isSomeString!T)
             {
-                if (this._payload.type == typeid(var2[string]))
-                    return this._payload.toString();
-                return "null";
+                return aa.toString;
             }
             else
                 return T.init;
@@ -208,10 +206,15 @@ public struct var2
             this._type = Type.String;
             this._payload = to!string(t);
         }
-        else static if (is(T : var2[string]*))
+        else static if (is(T : var2[string]))
         {
             this._type = Type.Object;
-            this._payload = t;
+            Dictionary aa = new Dictionary;
+            foreach (k, v; cast(var2[string]) t)
+            {
+                aa._dict[k] = v;
+            }
+            this._payload = aa;
         }
         else static if (isArray!T)
         {
@@ -275,9 +278,9 @@ public struct var2
         }
         if (this.payloadType() == Type.Object)
         {
-            var2[string]* tmp = this._payload.get!(var2[string]*);
-            writefln(`tmp=%s`, tmp);
-            var2* found = name in (*tmp);
+            Dictionary aa = this._payload.get!Dictionary;
+            writefln(`aa=%s`, aa);
+            var2* found = name in aa._dict;
             writefln(`found=%s`, found);
             if (found)
                 return (*found);
@@ -293,14 +296,14 @@ public struct var2
         if (this._type != Type.Object)
         {
             this._type = Type.Object;
-            var2[string] aa;
-            this._payload = &aa;
+            this._payload = new Dictionary;
         }
-        var2[string]* aa = this._payload.get!(var2[string]*);
-        (*aa)[name] = var2(t);
+        Dictionary aa = this._payload.get!Dictionary;
+        aa._dict[name] = var2(t);
+        return aa._dict[name];
         ////return this._payload.get!(var2[string])[name];
-        var2* n = new var2;
-        return *n;
+        //var2* n = new var2;
+        //return *n;
     }
 
     public ref var2 opIndex(size_t idx, string file = __FILE__, size_t line = __LINE__)
@@ -372,6 +375,7 @@ public struct var2
         if (this._type == Type.Object)
         {
             import std.stdio;
+
             //var2[string]* aa = this._payload.get!(var2[string]*);
             //if (!aa)
             writeln(`is object!`);
@@ -387,5 +391,14 @@ public struct var2
             }
         }
         return to!string(this._type) ~ `=` ~ this._payload.toString;
+    }
+}
+
+package class Dictionary
+{
+    var2[string] _dict;
+    public override string toString()
+    {
+        return format!`%s`(this._dict);
     }
 }
