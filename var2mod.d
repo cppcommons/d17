@@ -253,12 +253,6 @@ public struct var2
     // P.T.
     public ref var2 opIndex(string name, string file = __FILE__, size_t line = __LINE__)
     {
-        /+
-        // if name is numeric, we should convert to int
-        if (name.length && name[0] >= '0' && name[0] <= '9')
-            return opIndex(to!size_t(name), file, line);
-        +/
-
         if (name == "length" && this.payloadType() == Type.String)
         {
             var2* tmp = new var2;
