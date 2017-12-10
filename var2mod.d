@@ -79,12 +79,13 @@ public struct var2
             final switch (payloadType)
         {
         case Type.Boolean:
+            bool val = this._payload.get!bool;
             static if (is(T == bool))
-                return this._payload.get!bool;
+                return val;
             else static if (isFloatingPoint!T || isIntegral!T)
-                return cast(T)(this._payload.get!bool ? 1 : 0);
+                return cast(T)(val ? 1 : 0);
             else static if (isSomeString!T)
-                return this._payload.get!bool ? "true" : "false";
+                return val ? "true" : "false";
             else
                 return T.init;
         case Type.Object:
@@ -92,11 +93,8 @@ public struct var2
             static if (isAssociativeArray!T)
             {
                 T ret;
-                if (this._payload.type == typeid(var2[string]*))
-                {
-                    foreach (k, v; aa._dict)
-                        ret[to!(KeyType!T)(k)] = v.get!(ValueType!T);
-                }
+                foreach (k, v; aa._dict)
+                    ret[to!(KeyType!T)(k)] = v.get!(ValueType!T);
                 return ret;
             }
             else static if (isSomeString!T)
@@ -253,9 +251,11 @@ public struct var2
     // P.T.
     public ref var2 opIndex(string name, string file = __FILE__, size_t line = __LINE__)
     {
+        /+
         // if name is numeric, we should convert to int
         if (name.length && name[0] >= '0' && name[0] <= '9')
             return opIndex(to!size_t(name), file, line);
+        +/
 
         if (name == "length" && this.payloadType() == Type.String)
         {
@@ -306,16 +306,6 @@ public struct var2
             if (idx < arr.length)
                 return arr[idx];
         }
-        /+
-        else if (_type == Type.Object)
-        {
-            // objects might overload opIndex
-            var2* n = new var2;
-            if ("opIndex" in this)
-                *n = this["opIndex"](idx);
-            return *n;
-        }
-        +/
         var2* n = new var2;
         return *n;
     }
