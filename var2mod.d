@@ -136,13 +136,17 @@ public struct var2
             else
                 return T.init;
         case Type.Array:
-
-            auto pl = this._payload.get!(var2[]);
+            //auto pl = this._payload.get!(var2[]);
             static if (isSomeString!T)
             {
+                writeln(`AAA`);
+            auto pl = this._payload.get!(var2[]);
+                writeln(`pl=`, to!string(pl));
                 return to!string(pl);
+                //return T.init;
             }
-            else static if (isArray!T)
+            else 
+            static if (isArray!T)
             {
                 T ret;
                 static if (is(ElementType!T == void))
