@@ -25,9 +25,9 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 */
 /++
-	A small script interpreter that builds on [arsd.jsvar] to be easily embedded inside and to have has easy
+	A small script interpreter that builds on [os1.lang.jsvar] to be easily embedded inside and to have has easy
 	two-way interop with the host D program.  The script language it implements is based on a hybrid of D and Javascript.
-	The type the language uses is based directly on [var] from [arsd.jsvar].
+	The type the language uses is based directly on [var] from [os1.lang.jsvar].
 
 	The interpreter is slightly buggy and poorly documented, but the basic functionality works well and much of
 	your existing knowledge from Javascript will carry over, making it hopefully easy to use right out of the box.
@@ -52,7 +52,7 @@ DEALINGS IN THE SOFTWARE.
 
 	OVERVIEW
 	$(LIST
-	* easy interop with D thanks to arsd.jsvar. When interpreting, pass a var object to use as globals.
+	* easy interop with D thanks to os1.lang.jsvar. When interpreting, pass a var object to use as globals.
 		This object also contains the global state when interpretation is done.
 	* mostly familiar syntax, hybrid of D and Javascript
 	* simple implementation is moderately small and fairly easy to hack on (though it gets messier by the day), but it isn't made for speed.
@@ -197,7 +197,7 @@ module os1.lang.script;
 	This example shows the basics of how to interact with the script.
 	The string enclosed in `q{ .. }` is the script language source.
 
-	The [var] type comes from [arsd.jsvar] and provides a dynamic type
+	The [var] type comes from [os1.lang.jsvar] and provides a dynamic type
 	to D. It is the same type used in the script language and is weakly
 	typed, providing operator overloads to work with many D types seamlessly.
 

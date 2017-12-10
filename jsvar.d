@@ -55,7 +55,7 @@ DEALINGS IN THE SOFTWARE.
 	You can also use [var.fromJson], a static method, to quickly and easily
 	read json or [var.toJson] to write it.
 
-	Also, if you combine this with my [arsd.script] module, you get pretty
+	Also, if you combine this with my [os1.lang.script] module, you get pretty
 	easy interop with a little scripting language that resembles a cross between
 	D and Javascript - just like you can write in D itself using this type.
 
@@ -143,7 +143,7 @@ enum scriptable = "os1_jsvar_compatible";
 /*
 	Script notes:
 
-	the one type is var. It works just like the var type in D from arsd.jsvar.
+	the one type is var. It works just like the var type in D from os1.lang.jsvar.
 	(it might be fun to try to add other types, and match D a little better here! We could allow implicit conversion to and from var, but not on the other types, they could get static checking. But for now it is only var. BTW auto is an alias for var right now)
 
 	There is no comma operator, but you can use a scope as an expression: a++, b++; can be written as {a++;b++;}
