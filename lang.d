@@ -69,7 +69,7 @@ void register(TypeInfo t)
     //const(OffsetTypeInfo)[] tiList = t.classinfo.offTi();
     const(OffsetTypeInfo)[] tiList = t.offTi();
     writeln(tiList);
-    import arsd.jsvar;
+    import os1.lang.jsvar;
 
     var a = 10;
     var b = a - 5;
@@ -86,6 +86,10 @@ void register(TypeInfo t)
 
     a.xxx = long.max;
     a.yyy = cast(real)long.max;
+    writeln(a.zzz);
+    assert(a.zzz == var(null));
+    a.zzz = var.emptyObject;
+    a.zzz.z = `😀😬😁😂😃😄😅😆😇😉😊🙂☺️😋😌😍😘😗😙😚😜😝😛😎😏😶😐😑😒😳😞😟😠😡😔😕🙁☹️😣😖😫😩😤😮😱😨😰😯😦😧😢😥😪😓😭😵😲😷😴💤💩😈👿👹👺💀👻👽`;
 
     writeln(a.joe);
     a.foo.bar += 55;
