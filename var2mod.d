@@ -317,13 +317,13 @@ public struct var2
     // N.T.
     public ref var2 opIndexAssign(T)(T t, size_t idx, string file = __FILE__, size_t line = __LINE__)
     {
-        if (_type == Type.Array)
+        if (this._type == Type.Array)
         {
-            var2[] arr = this._payload.get!(var2[]);
-            if (idx >= arr.length)
-                arr.length = idx + 1;
-            arr[idx] = t;
-            return arr[idx];
+            Vector vec = this._payload.get!Vector;
+            if (idx >= vec._array.length)
+                vec._array.length = idx + 1;
+            vec._array[idx] = t;
+            return vec._array[idx];
         }
         var2* n = new var2;
         return *n;
