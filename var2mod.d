@@ -1,5 +1,7 @@
 module var2mod;
 
+import std.stdio;
+
 import std.conv;
 import std.format;
 import std.traits;
@@ -274,7 +276,9 @@ public struct var2
         if (this.payloadType() == Type.Object)
         {
             var2[string]* tmp = this._payload.get!(var2[string]*);
+            writefln(`tmp=%s`, tmp);
             var2* found = name in (*tmp);
+            writefln(`found=%s`, found);
             if (found)
                 return (*found);
         }
@@ -363,7 +367,7 @@ public struct var2
         return *n;
     }
     +/
-    public string toString()
+    public string toString2()
     {
         if (this._type == Type.Object)
         {
