@@ -147,6 +147,10 @@ void register(TypeInfo t)
     i ~= 2;
     v = i;
     writeln(v);
+    v = true;
+    writeln(v);
+    var v2;
+    writeln(v2);
 }
 
 int add2(int a, int b)

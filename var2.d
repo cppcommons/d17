@@ -316,7 +316,7 @@ public struct var2
         else static if (is(T == bool))
         {
             this._type = Type.Boolean;
-            this._payload._boolean = t;
+            this._payload = t;
         }
         /+
         else static if (isSomeChar!T)
