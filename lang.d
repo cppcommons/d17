@@ -164,10 +164,10 @@ void register(TypeInfo t)
 
     var2[string] _aa;
     var2 aa = _aa;
-    //aa[`x`] = 123;
+    aa[`x`] = 123;
     writeln(aa.get!(var2[string]));
     writeln(aa);
-    //writeln(aa[`x`]);
+    writeln(aa[`x`]);
     aa.yyy = 777;
     writeln(aa);
     writeln(aa.yyy);
