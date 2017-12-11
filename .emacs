@@ -6,7 +6,7 @@
  '(make-backup-files nil)
  '(package-selected-packages
    (quote
-    (flycheck-d-unittest flycheck d-mode use-package highlight-parentheses))))
+    (d-mode use-package highlight-parentheses))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -101,23 +101,23 @@
 ;(progn (shell) (delete-other-windows))
 
 (use-package d-mode :ensure t)
-(add-hook 'd-mode-hook
+'(add-hook 'd-mode-hook
           (lambda ()
             (setq-local flycheck-checker 'd-dmd)
             (local-set-key  (kbd "C-c C-p") 'flycheck-previous-error)
             (local-set-key  (kbd "C-c C-n") 'flycheck-next-error)))
-(add-hook 'c-mode-hook
+'(add-hook 'c-mode-hook
           (lambda ()
             (setq-local flycheck-checker 'd-dmd)
             (local-set-key  (kbd "C-c C-p") 'flycheck-previous-error)
             (local-set-key  (kbd "C-c C-n") 'flycheck-next-error)))
-(add-hook 'c++-mode-hook
+'(add-hook 'c++-mode-hook
           (lambda ()
             (setq-local flycheck-checker 'd-dmd)
             (local-set-key  (kbd "C-c C-p") 'flycheck-previous-error)
             (local-set-key  (kbd "C-c C-n") 'flycheck-next-error)))
 
-(use-package flycheck :ensure t)
+;(use-package flycheck :ensure t)
 
 ;(load-file "~/flycheck.el")
 
@@ -127,11 +127,11 @@
 (add-to-list 'exec-path "/c/D/dmd2/windows/bin")
 
 
-(global-flycheck-mode)
+;(global-flycheck-mode)
 
-(use-package flycheck-d-unittest :ensure t)
-(require 'flycheck-d-unittest)
-(setup-flycheck-d-unittest)
+;(use-package flycheck-d-unittest :ensure t)
+;(require 'flycheck-d-unittest)
+;(setup-flycheck-d-unittest)
 
 (global-set-key [C-right] 'forward-sexp)
 (global-set-key [C-left]  'backward-sexp)
