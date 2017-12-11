@@ -107,6 +107,7 @@ public class os_long_value : os_value
     {
         return to!string(this._data);
     }
+    /+
     override var2[] *getVector()
     {
         return null;
@@ -119,6 +120,7 @@ public class os_long_value : os_value
     {
         return null;
     }
+    +/
 }
 
 public class os_real_value : os_value
@@ -148,6 +150,7 @@ public class os_real_value : os_value
     {
         return to!string(this._data);
     }
+    /+
     override var2[] *getVector()
     {
         return null;
@@ -160,6 +163,7 @@ public class os_real_value : os_value
     {
         return null;
     }
+    +/
 }
 
 public class os_string_value : os_value
@@ -189,6 +193,7 @@ public class os_string_value : os_value
     {
         return this._data;
     }
+    /+
     override var2[] *getVector()
     {
         return null;
@@ -201,6 +206,7 @@ public class os_string_value : os_value
     {
         return null;
     }
+    +/
 }
 
 alias var2 delegate(var2[]) FuncTypeX;
@@ -215,6 +221,7 @@ public class os_func_value : os_value
     {
         return this.getString;
     }
+    /+
     override bool getBoolean()
     {
         return false;
@@ -227,10 +234,12 @@ public class os_func_value : os_value
     {
         return 0;
     }
+    +/
     override string getString()
     {
         return `<function>`;
     }
+    /+
     override var2[] *getVector()
     {
         return null;
@@ -239,6 +248,7 @@ public class os_func_value : os_value
     {
         return null;
     }
+    +/
     override FuncTypeX getCallable()
     {
         return this._data;
@@ -257,6 +267,7 @@ package class Vector : os_value
     {
     }
     +/
+    /+
     override bool getBoolean()
     {
         return false;
@@ -269,6 +280,7 @@ package class Vector : os_value
     {
         return 0;
     }
+    +/
     override string getString()
     {
         return to!string(this._data);
@@ -277,6 +289,7 @@ package class Vector : os_value
     {
         return &_data;
     }
+    /+
     override var2[string] *getDictionary()
     {
         return null;
@@ -285,6 +298,7 @@ package class Vector : os_value
     {
         return null;
     }
+    +/
 }
 
 package class Dictionary : os_value
@@ -299,6 +313,7 @@ package class Dictionary : os_value
     {
     }
     +/
+    /+
     override bool getBoolean()
     {
         return false;
@@ -311,22 +326,27 @@ package class Dictionary : os_value
     {
         return 0;
     }
+    +/
     override string getString()
     {
         return to!string(this._data);
     }
+    /+
     override var2[] *getVector()
     {
         return null;
     }
+    +/
     override var2[string] *getDictionary()
     {
         return &_data;
     }
+    /+
     override FuncTypeX getCallable()
     {
         return null;
     }
+    +/
 }
 
 public struct var2
