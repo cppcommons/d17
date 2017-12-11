@@ -322,8 +322,10 @@ public struct var2
     {
         switch (this._type)
         {
+        case Type.Array:
+            return `Array` ~ to!string(this._payload.get!Vector);
         case Type.Object:
-            return `[Object] ` ~ to!string(this._payload.get!Dictionary);
+            return `Object` ~ to!string(this._payload.get!Dictionary);
         default:
             return to!string(this._type) ~ `(` ~ this._payload.toString ~ `)`;
             //break;
