@@ -44,6 +44,22 @@ version (all)
         }
     }
 
+    public class os_null_value : os_value
+    {
+        package static const os_null_value _singleton = new os_null_value;
+        package this()
+        {
+        }
+        public override string toString()
+        {
+            return `null`;
+        }
+        override string getString()
+        {
+            return `null`;
+        }
+    }
+
     public class os_bool_value : os_value
     {
         private bool _data;
@@ -257,6 +273,7 @@ public struct var2
 {
     public enum Type
     {
+        Null,
         Object,
         Array,
         Integral,
@@ -323,20 +340,23 @@ public struct var2
         else
             final switch (payloadType)
         {
+        case Type.Null:
         case Type.Boolean:
         case Type.Floating:
         case Type.Integral:
         case Type.String:
         case Type.Object:
         case Type.Function:
+            os_value value = this._value;
+            if (payloadType == Type.Null) value = cast(os_value)os_null_value._singleton;
             static if (is(T == bool))
-                return this._value.getBoolean();
+                return value.getBoolean();
             else static if (isFloatingPoint!T)
-                return to!T(this._value.getFloating());
+                return to!T(value.getFloating());
             else static if (isIntegral!T)
-                return to!T(this._value.getIntegral());
+                return to!T(value.getIntegral());
             else static if (isSomeString!T)
-                return this._value.getString();
+                return value.getString();
             else
                 return T.init;
             /+
@@ -550,6 +570,8 @@ public struct var2
     {
         switch (this._type)
         {
+        case Type.Null:
+            return `Null`;
         case Type.Array:
             return `Array` ~ this._value.toString;
         case Type.Object:
@@ -619,3 +641,17 @@ unittest
     var2 answer = x3(11, 22.5);
     answer.toString.should.equal("Integral(33)");
 }
+
+unittest
+{
+    scope (success)
+        writeln("[unittest(@", __FILE__, ":", __LINE__, ") succeeded]");
+    var2 x4;
+    writeln(__LINE__, "==>", x4);
+    (x4.get!string).should.equal("null");
+    (x4.toString).should.equal("Null");
+    (x4.get!long).should.equal(0);
+    (x4.get!real).should.equal(0);
+    (x4.get!string).should.equal("null");
+}
+
