@@ -2,6 +2,7 @@ module var2mod;
 
 import std.stdio;
 
+import std.array;
 import std.conv;
 import std.format;
 import std.traits;
@@ -13,6 +14,7 @@ public abstract class os_value
     abstract long getIntegral();
     abstract real getFloating();
     abstract string getString();
+    abstract var2[] *getVector();
     abstract var2[string] *getDictionary();
 }
 
@@ -22,6 +24,10 @@ public class os_bool_value : os_value
     package this(bool data)
     {
         this._data = data;
+    }
+    public override string toString()
+    {
+        return this.getString;
     }
     override bool getBoolean()
     {
@@ -38,6 +44,181 @@ public class os_bool_value : os_value
     override string getString()
     {
         return this._data ? "true" : "false";
+    }
+    override var2[] *getVector()
+    {
+        return null;
+    }
+    override var2[string] *getDictionary()
+    {
+        return null;
+    }
+}
+
+public class os_long_value : os_value
+{
+    private long _data;
+    package this(long data)
+    {
+        this._data = data;
+    }
+    override bool getBoolean()
+    {
+        return (this._data != 0);
+    }
+    override long getIntegral()
+    {
+        return this._data;
+    }
+    override real getFloating()
+    {
+        return to!real(this._data);
+    }
+    override string getString()
+    {
+        return to!string(this._data);
+    }
+    override var2[] *getVector()
+    {
+        return null;
+    }
+    override var2[string] *getDictionary()
+    {
+        return null;
+    }
+}
+
+public class os_real_value : os_value
+{
+    private real _data;
+    package this(real data)
+    {
+        this._data = data;
+    }
+    override bool getBoolean()
+    {
+        return (this._data != 0);
+    }
+    override long getIntegral()
+    {
+        return to!long(this._data);
+    }
+    override real getFloating()
+    {
+        return this._data;
+    }
+    override string getString()
+    {
+        return to!string(this._data);
+    }
+    override var2[] *getVector()
+    {
+        return null;
+    }
+    override var2[string] *getDictionary()
+    {
+        return null;
+    }
+}
+
+public class os_string_value : os_value
+{
+    private string _data;
+    package this(string data)
+    {
+        this._data = data;
+    }
+    override bool getBoolean()
+    {
+        return !this._data.empty;
+    }
+    override long getIntegral()
+    {
+        return to!long(this._data);
+    }
+    override real getFloating()
+    {
+        return to!real(this._data);
+    }
+    override string getString()
+    {
+        return this._data;
+    }
+    override var2[] *getVector()
+    {
+        return null;
+    }
+    override var2[string] *getDictionary()
+    {
+        return null;
+    }
+}
+
+alias var2 delegate(var2[]) FuncTypeX;
+public class os_func_value : os_value
+{
+    private FuncTypeX _data;
+    package this(FuncTypeX data)
+    {
+        this._data = data;
+    }
+    override bool getBoolean()
+    {
+        return false;
+    }
+    override long getIntegral()
+    {
+        return 0;
+    }
+    override real getFloating()
+    {
+        return 0;
+    }
+    override string getString()
+    {
+        return `<function>`;
+    }
+    override var2[] *getVector()
+    {
+        return null;
+    }
+    override var2[string] *getDictionary()
+    {
+        return null;
+    }
+}
+
+package class Vector : os_value
+{
+    var2[] _data;
+    public override string toString()
+    {
+        return to!string(this._data);
+    }
+    /+
+    package this(XXX)
+    {
+    }
+    +/
+    override bool getBoolean()
+    {
+        return false;
+    }
+    override long getIntegral()
+    {
+        return 0;
+    }
+    override real getFloating()
+    {
+        return 0;
+    }
+    override string getString()
+    {
+        return to!string(this._data);
+    }
+    override var2[] *getVector()
+    {
+        return &_data;
     }
     override var2[string] *getDictionary()
     {
@@ -73,6 +254,10 @@ package class Dictionary : os_value
     {
         return to!string(this._data);
     }
+    override var2[] *getVector()
+    {
+        return null;
+    }
     override var2[string] *getDictionary()
     {
         return &_data;
@@ -93,7 +278,6 @@ public struct var2
     }
 
     private Type _type;
-    private Variant _payload;
     private os_value _value;
     public Type payloadType()
     {
@@ -152,7 +336,10 @@ public struct var2
             final switch (payloadType)
         {
         case Type.Boolean:
+        case Type.Floating:
+        case Type.Integral:
         case Type.Object:
+        case Type.Function:
             static if (is(T == bool))
                 return this._value.getBoolean();
             else static if (isFloatingPoint!T)
@@ -161,7 +348,8 @@ public struct var2
                 return to!T(this._value.getIntegral());
             else static if (isSomeString!T)
                 return this._value.getString();
-            else if (isAssociativeArray!T)
+            /+
+            else if (isAssociativeArray!r)
             {
                 var2[string] *dict = this._value.getDictionary();
                 if (!dict) return T.init;
@@ -170,47 +358,15 @@ public struct var2
                     ret[to!(KeyType!T)(k)] = v.get!(ValueType!T);
                 return ret;
             }
-            else
-                return T.init;
-        /+
-        case Type.Object:
-            Dictionary dict = this._payload.get!Dictionary;
-            static if (isAssociativeArray!T)
-            {
-                T ret;
-                foreach (k, v; dict._dict)
-                    ret[to!(KeyType!T)(k)] = v.get!(ValueType!T);
-                return ret;
-            }
-            else static if (isSomeString!T)
-            {
-                return dict.toString;
-            }
-            else
-                return T.init;
-        +/
-        case Type.Integral:
-            long val = this._payload.get!long;
-            static if (isFloatingPoint!T || isIntegral!T)
-                return to!T(val);
-            else static if (isSomeString!T)
-                return to!string(val);
-            else
-                return T.init;
-        case Type.Floating:
-            real val = this._payload.get!real;
-            static if (isFloatingPoint!T || isIntegral!T)
-                return to!T(val);
-            else static if (isSomeString!T)
-                return to!string(val);
+            +/
             else
                 return T.init;
         case Type.String:
-            static if (__traits(compiles, to!T(this._payload.get!string)))
+            static if (__traits(compiles, to!T(this._value.getString)))
             {
                 try
                 {
-                    return to!T(this._payload.get!string);
+                    return to!T(this._value.getString);
                 }
                 catch (Exception e)
                 {
@@ -220,10 +376,10 @@ public struct var2
             else
                 return T.init;
         case Type.Array:
-            Vector vec = this._payload.get!Vector;
+            ////Vector vec = this._payload.get!Vector;
             static if (isSomeString!T)
             {
-                return vec.toString;
+                return this._value.getString;
             }
             else static if (isArray!T)
             {
@@ -233,18 +389,13 @@ public struct var2
                 }
                 else
                 {
-                    ////Vector vec = this._payload.get!Vector;
+                    var2[] *vec = this._value.getVector();
                     alias ElemType = ElementType!T;
-                    foreach (item; vec._vec)
+                    foreach (item; (*vec))
                         ret ~= item.get!(ElemType);
                 }
                 return ret;
             }
-            else
-                return T.init;
-        case Type.Function:
-            static if (isSomeString!T)
-                return "<function>";
             else
                 return T.init;
         }
@@ -255,17 +406,17 @@ public struct var2
         static if (isFloatingPoint!T)
         {
             this._type = Type.Floating;
-            this._payload = cast(real) t;
+            this._value = new os_real_value(t);
         }
         else static if (isIntegral!T)
         {
             this._type = Type.Integral;
-            this._payload = cast(long) t;
+            this._value = new os_long_value(t);
         }
         else static if (isCallable!T)
         {
             this._type = Type.Function;
-            this._payload = delegate var2(var2[] args) {
+            FuncTypeX func = delegate var2(var2[] args) {
                 var2 ret;
                 ParameterTypeTuple!T fargs;
                 foreach (idx, a; fargs)
@@ -284,11 +435,12 @@ public struct var2
                 }
                 return ret;
             };
+            this._value = new os_func_value(func);
         }
         else static if (isSomeString!T)
         {
             this._type = Type.String;
-            this._payload = to!string(t);
+            this._value = new os_string_value(t);
         }
         else static if (is(T : var2[string]))
         {
@@ -305,17 +457,17 @@ public struct var2
         else static if (isArray!T)
         {
             this._type = Type.Array;
-            Vector vec = new Vector;
-            vec._vec.length = t.length;
+            Vector value = new Vector;
+            var2[] *vec = value.getVector();
+            (*vec).length = t.length;
             static if (!is(T == void[]))
                 foreach (i, item; t)
-                    vec._vec[i] = var2(item);
-            this._payload = vec;
+                    (*vec)[i] = var2(item);
+            this._value = value;
         }
         else static if (is(T == bool))
         {
             this._type = Type.Boolean;
-            this._payload = t; /**/
             this._value = new os_bool_value(t);
         }
         else
@@ -343,19 +495,18 @@ public struct var2
         if (name == "length" && this.payloadType() == Type.String)
         {
             var2* tmp = new var2;
-            *tmp = _payload.get!string.length;
+            *tmp = this._value.getString.length;
             return *tmp;
         }
         if (name == "length" && this.payloadType() == Type.Array)
         {
-            Vector vec = this._payload.get!Vector;
+            var2[] *vec = this._value.getVector;
             var2* tmp = new var2;
-            *tmp = vec._vec.length;
+            *tmp = (*vec).length;
             return *tmp;
         }
         if (this.payloadType() == Type.Object)
         {
-            //Dictionary dict = this._payload.get!Dictionary;
             var2[string] *dict = this._value.getDictionary();
             var2* found = name in (*dict);
             if (found)
@@ -387,9 +538,9 @@ public struct var2
     {
         if (_type == Type.Array)
         {
-            Vector vec = this._payload.get!Vector;
-            if (idx < vec._vec.length)
-                return vec._vec[idx];
+            var2[] *vec = this._value.getVector;
+            if (idx < (*vec).length)
+                return (*vec)[idx];
         }
         var2* n = new var2;
         return *n;
@@ -400,11 +551,12 @@ public struct var2
     {
         if (this._type == Type.Array)
         {
-            Vector vec = this._payload.get!Vector;
-            if (idx >= vec._vec.length)
-                vec._vec.length = idx + 1;
-            vec._vec[idx] = t;
-            return vec._vec[idx];
+            //Vector vec = this._payload.get!Vector;
+            var2[] *vec = this._value.getVector();
+            if (idx >= (*vec).length)
+                (*vec).length = idx + 1;
+            (*vec)[idx] = t;
+            return (*vec)[idx];
         }
         var2* n = new var2;
         return *n;
@@ -419,18 +571,11 @@ public struct var2
         case Type.Object:
             return `Object` ~ to!string(this._payload.get!Dictionary);
         default:
-            return to!string(this._type) ~ `(` ~ this._payload.toString ~ `)`;
+            return to!string(this._type) ~
+                `(` ~ this._value.toString ~ `)`;
+            //return to!string(this._type) ~ this._value.toString;
             //break;
         }
     }
 }
 
-package class Vector
-{
-    var2[] _vec;
-    public override string toString()
-    {
-        //return format!`%s`(this._vec);
-        return to!string(this._vec);
-    }
-}

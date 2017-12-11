@@ -1,30 +1,42 @@
 import std.conv;
 import std.stdio;
 
+private void exit(int code)
+{
+	import std.c.stdlib;
+
+	std.c.stdlib.exit(code);
+}
+
 void main(string[] args)
 {
     import var2mod;
     var2 x0 = true;
     writeln(x0);
-    writeln(x0.get!string);
-    writeln(x0.get!long);
-    writeln(x0.get!int);
-    writeln(x0.get!real);
+    writeln(`x0.get!string=`, x0.get!string);
+    writeln(`x0.get!long=`, x0.get!long);
+    writeln(`x0.get!int=`, x0.get!int);
+    writeln(`x0.get!real=`, x0.get!real);
     writeln();
 
     var2 x1 = 123.45;
-    writeln(x1.get!long);
-    writeln(x1.get!real);
-    writeln(x1.get!string);
+    writeln(`x1.get!long=`, x1.get!long);
+    writeln(`x1.get!real=`, x1.get!real);
+    writeln(`x1.get!string=`, x1.get!string);
+    writeln();
+
     var2 x2 = 123;
-    writeln(x2.get!long);
-    writeln(x2.get!real);
-    writeln(x2.get!string);
+    writeln(`x2.get!long=`, x2.get!long);
+    writeln(`x2.get!real=`, x2.get!real);
+    writeln(`x2.get!string=`, x2.get!string);
+    writeln();
+
     var2 x3 = &add2;
-    writeln(x3.get!long);
-    writeln(x3.get!real);
-    writeln(x3.get!string);
+    writeln(`x3.get!long=`, x3.get!long);
+    writeln(`x3.get!real=`, x3.get!real);
+    writeln(`x3.get!string=`, x3.get!string);
     var2 answer = x3(11, 22.5);
+    exit(0);
     writeln(`answer=`, answer);
     var2 v;
     v = `abc`;
