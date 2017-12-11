@@ -7,7 +7,7 @@ REM --- ï“èWÇ∑ÇÈÇ∆Ç±ÇÎ(Ç±Ç±Ç©ÇÁÅ´) ---
 set CYG_NAME=project1
 set CYG_BITS=32
 ::set CYG_CATS=Archive,Python
-set CYG_PKGS=procps,psmisc,tmux,vim,emacs-w32
+set CYG_PKGS=procps,psmisc,tmux,vim,emacs-w32,git
 ::set DT_ICONS=1
 set CYG_HOME=.$
 REM --- ï“èWÇ∑ÇÈÇ∆Ç±ÇÎ(Ç±Ç±Ç‹Ç≈Å™) ---
