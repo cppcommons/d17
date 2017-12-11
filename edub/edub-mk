@@ -1,0 +1,9 @@
+#! bash -uvx
+cp -p edub2.d edub.d
+rm -f edub.exe
+rm -rf edub.exe.bin
+dmd -of=edub.exe -od=edub.exe.bin -g -debug edub.d
+cp -p edub.exe /cygdrive/e/opt/bin32/.
+cp -p edub.exe /cygdrive/c/Users/Public/dev1/bin32/.
+rm -rf edub.exe.bin
+rm -f edub.exe

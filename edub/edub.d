@@ -11,7 +11,7 @@ import std.path : absolutePath, baseName, dirName, extension, isAbsolute,
 	relativePath;
 import std.process : execute, executeShell;
 import std.regex : regex, matchAll, matchFirst, replaceAll;
-import std.stdio : writefln, writeln, File;
+import std.stdio : writefln, writeln, stdout, File;
 import std.typecons : Yes, No;
 import std.datetime.systime : Clock;
 import std.process : pipeProcess, spawnProcess, wait, Redirect;
@@ -349,6 +349,7 @@ private int handle_exe_output(string ext, string[] args)
 	}
 
 	writeln(`handle_exe_output:`, args);
+    stdout.flush();
 	string command = pop(args);
 	//writefln(`handle_exe_output: %s %s %s`, g_context.fileName, command, args);
 	switch (command)

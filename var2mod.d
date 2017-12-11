@@ -7,6 +7,22 @@ import std.format;
 import std.traits;
 import std.variant;
 
+public abstract class os_value
+{
+  abstract long getIntegral();
+}
+
+public class os_bool_value : os_value
+{
+  package this(bool data)
+  {
+  }
+  override long getIntegral()
+  {
+    return 0;
+  }
+}
+
 public struct var2
 {
     public enum Type

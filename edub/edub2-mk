@@ -1,0 +1,20 @@
+rm -f edub2.exe
+rm -rf edub2.exe.bin
+dmd -of=edub2.exe -od=edub2.exe.bin -g -debug edub2.d
+rm -rf edub2.exe.bin
+
+edub2 test1.dll debug app1.d ../*.d emake*.d .\emake*.d \
+arsd/dom.d@https://raw.githubusercontent.com/adamdruppe/arsd/master/dom.d \
+defines=A:@B \
+defs=C:@D \
+main=main.d \
+data=..\abc\data1 \
+data=..\abc\data2 \
+include=..\abc\import1 \
+inc=..\abc\import2 \
+libs=gdi32.lib:kernel32.lib \
+[d2sqlite3A] \
+[d2sqlite3B#~master] \
+[d2sqlite3C#~master#without-lib] \
+[d2sqlite3D#~master#without{#}lib] \
+"  [d2sqlite3E#~master#without-lib]  " [d2sqlite3F##without{#}lib] "[hibernated#@hibernated-0.3.2]"
