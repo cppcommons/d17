@@ -4,9 +4,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(make-backup-files nil)
- '(package-selected-packages
-   (quote
-    (d-mode use-package highlight-parentheses))))
+ '(package-selected-packages (quote (ac-dcd d-mode use-package highlight-parentheses))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -150,3 +148,24 @@
 
 (global-set-key [C-right] 'forward-sexp)
 (global-set-key [C-left]  'backward-sexp)
+
+(use-package ac-dcd :ensure t)
+    (add-hook 'd-mode-hook
+      (lambda ()
+          (auto-complete-mode t)
+          (when (featurep 'yasnippet) (yas-minor-mode-on))
+          (ac-dcd-maybe-start-server)
+          (ac-dcd-add-imports)
+          (add-to-list 'ac-sources 'ac-source-dcd)
+          (define-key d-mode-map (kbd "C-c ?") 'ac-dcd-show-ddoc-with-buffer)
+          (define-key d-mode-map (kbd "C-c .") 'ac-dcd-goto-definition)
+          (define-key d-mode-map (kbd "C-c ,") 'ac-dcd-goto-def-pop-marker)
+          (define-key d-mode-map (kbd "C-c s") 'ac-dcd-search-symbol)
+
+          (when (featurep 'popwin)
+            (add-to-list 'popwin:special-display-config
+                         `(,ac-dcd-error-buffer-name :noselect t))
+            (add-to-list 'popwin:special-display-config
+                         `(,ac-dcd-document-buffer-name :position right :width 80))
+            (add-to-list 'popwin:special-display-config
+                         `(,ac-dcd-search-symbol-buffer-name :position bottom :width 5)))))
