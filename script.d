@@ -42,6 +42,9 @@ void main(string[] args)
     i ~= 2;
     v = i;
     writeln(v);
+    string[] slist = [`aaa`, `bbb`];
+    v = slist;
+    writeln(v);
     v = true;
     writeln(v);
     writeln(v.get!bool);
