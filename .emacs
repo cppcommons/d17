@@ -90,6 +90,21 @@
    ([(shift f12)] . global-whitespace-mode)))
 
 (setq-default tab-width 4 indent-tabs-mode nil)
+'(add-hook 'd-mode-hook
+          (lambda ()
+            (c-set-style "bsd")
+            (setq c-basic-offset 4)
+            (setq indent-tabs-mode nil)
+            (setq tab-width 4)
+            ))
+(add-hook 'd-mode-hook ;; https://masutaka.net/chalow/2009-07-16-1.html
+          (lambda ()
+            (c-set-style "bsd")                            ;;; (a)
+            (setq c-basic-offset 4)                        ;;; (b)
+            ;; 演算式が複数行にまたがるときのオフセット
+            (c-set-offset 'statement-cont 'c-lineup-math)  ;;; (c)
+            ;; 行末のスペースやタブに色づけして警告する。
+            (setq show-trailing-whitespace t)))            ;;; (d)
 
 '(when (and (not window-system)
            (string-match "^xterm" (getenv "TERM")))
