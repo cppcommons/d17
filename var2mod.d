@@ -8,245 +8,249 @@ import std.format;
 import std.traits;
 import std.variant;
 
-public abstract class os_value
+version (all)
 {
-    bool getBoolean()
+    public abstract class os_value
     {
-        return false;
+        bool getBoolean()
+        {
+            return false;
+        }
+
+        long getIntegral()
+        {
+            return 0;
+        }
+
+        real getFloating()
+        {
+            return 0;
+        }
+
+        string getString();
+        var2[]* getVector()
+        {
+            return null;
+        }
+
+        var2[string]* getDictionary()
+        {
+            return null;
+        }
+
+        os_callable getCallable()
+        {
+            return null;
+        }
     }
 
-    long getIntegral()
+    public class os_bool_value : os_value
     {
-        return 0;
+        private bool _data;
+        package this(bool data)
+        {
+            this._data = data;
+        }
+
+        public override string toString()
+        {
+            return this.getString;
+        }
+
+        override bool getBoolean()
+        {
+            return this._data;
+        }
+
+        override long getIntegral()
+        {
+            return to!long(this._data);
+        }
+
+        override real getFloating()
+        {
+            return to!real(this._data);
+        }
+
+        override string getString()
+        {
+            return this._data ? "true" : "false";
+        }
     }
 
-    real getFloating()
+    public class os_long_value : os_value
     {
-        return 0;
+        private long _data;
+        package this(long data)
+        {
+            this._data = data;
+        }
+
+        public override string toString()
+        {
+            return this.getString;
+        }
+
+        override bool getBoolean()
+        {
+            return (this._data != 0);
+        }
+
+        override long getIntegral()
+        {
+            return this._data;
+        }
+
+        override real getFloating()
+        {
+            return to!real(this._data);
+        }
+
+        override string getString()
+        {
+            return to!string(this._data);
+        }
     }
 
-    string getString();
-    var2[]* getVector()
+    public class os_real_value : os_value
     {
-        return null;
+        private real _data;
+        package this(real data)
+        {
+            this._data = data;
+        }
+
+        public override string toString()
+        {
+            return this.getString;
+        }
+
+        override bool getBoolean()
+        {
+            return (this._data != 0);
+        }
+
+        override long getIntegral()
+        {
+            return to!long(this._data);
+        }
+
+        override real getFloating()
+        {
+            return this._data;
+        }
+
+        override string getString()
+        {
+            return to!string(this._data);
+        }
     }
 
-    var2[string]* getDictionary()
+    public class os_string_value : os_value
     {
-        return null;
+        private string _data;
+        package this(string data)
+        {
+            this._data = data;
+        }
+
+        public override string toString()
+        {
+            return this.getString;
+        }
+
+        override bool getBoolean()
+        {
+            return !this._data.empty;
+        }
+
+        override long getIntegral()
+        {
+            return to!long(this._data);
+        }
+
+        override real getFloating()
+        {
+            return to!real(this._data);
+        }
+
+        override string getString()
+        {
+            return this._data;
+        }
     }
 
-    os_callable getCallable()
+    alias var2 delegate(var2[]) os_callable;
+    public class os_func_value : os_value
     {
-        return null;
-    }
-}
+        private os_callable _data;
+        package this(os_callable data)
+        {
+            this._data = data;
+        }
 
-public class os_bool_value : os_value
-{
-    private bool _data;
-    package this(bool data)
-    {
-        this._data = data;
-    }
+        public override string toString()
+        {
+            return this.getString;
+        }
 
-    public override string toString()
-    {
-        return this.getString;
-    }
+        override string getString()
+        {
+            return `<function>`;
+        }
 
-    override bool getBoolean()
-    {
-        return this._data;
-    }
-
-    override long getIntegral()
-    {
-        return to!long(this._data);
+        override os_callable getCallable()
+        {
+            return this._data;
+        }
     }
 
-    override real getFloating()
+    package class Vector : os_value
     {
-        return to!real(this._data);
-    }
-
-    override string getString()
-    {
-        return this._data ? "true" : "false";
-    }
-}
-
-public class os_long_value : os_value
-{
-    private long _data;
-    package this(long data)
-    {
-        this._data = data;
-    }
-
-    public override string toString()
-    {
-        return this.getString;
-    }
-
-    override bool getBoolean()
-    {
-        return (this._data != 0);
-    }
-
-    override long getIntegral()
-    {
-        return this._data;
-    }
-
-    override real getFloating()
-    {
-        return to!real(this._data);
-    }
-
-    override string getString()
-    {
-        return to!string(this._data);
-    }
-}
-
-public class os_real_value : os_value
-{
-    private real _data;
-    package this(real data)
-    {
-        this._data = data;
-    }
-
-    public override string toString()
-    {
-        return this.getString;
-    }
-
-    override bool getBoolean()
-    {
-        return (this._data != 0);
-    }
-
-    override long getIntegral()
-    {
-        return to!long(this._data);
-    }
-
-    override real getFloating()
-    {
-        return this._data;
-    }
-
-    override string getString()
-    {
-        return to!string(this._data);
-    }
-}
-
-public class os_string_value : os_value
-{
-    private string _data;
-    package this(string data)
-    {
-        this._data = data;
-    }
-
-    public override string toString()
-    {
-        return this.getString;
-    }
-
-    override bool getBoolean()
-    {
-        return !this._data.empty;
-    }
-
-    override long getIntegral()
-    {
-        return to!long(this._data);
-    }
-
-    override real getFloating()
-    {
-        return to!real(this._data);
-    }
-
-    override string getString()
-    {
-        return this._data;
-    }
-}
-
-alias var2 delegate(var2[]) os_callable;
-public class os_func_value : os_value
-{
-    private os_callable _data;
-    package this(os_callable data)
-    {
-        this._data = data;
-    }
-
-    public override string toString()
-    {
-        return this.getString;
-    }
-
-    override string getString()
-    {
-        return `<function>`;
-    }
-
-    override os_callable getCallable()
-    {
-        return this._data;
-    }
-}
-
-package class Vector : os_value
-{
-    var2[] _data;
-    public override string toString()
-    {
-        return to!string(this._data);
-    }
-    /+
+        var2[] _data;
+        public override string toString()
+        {
+            return to!string(this._data);
+        }
+        /+
     package this(XXX)
     {
     }
     +/
-    override string getString()
-    {
-        return to!string(this._data);
+        override string getString()
+        {
+            return to!string(this._data);
+        }
+
+        override var2[]* getVector()
+        {
+            return &_data;
+        }
     }
 
-    override var2[]* getVector()
+    package class Dictionary : os_value
     {
-        return &_data;
-    }
-}
-
-package class Dictionary : os_value
-{
-    private var2[string] _data;
-    public override string toString()
-    {
-        return to!string(this._data);
-    }
-    /+
+        private var2[string] _data;
+        public override string toString()
+        {
+            return to!string(this._data);
+        }
+        /+
     package this(XXX)
     {
     }
     +/
-    override string getString()
-    {
-        return to!string(this._data);
+        override string getString()
+        {
+            return to!string(this._data);
+        }
+
+        override var2[string]* getDictionary()
+        {
+            return &_data;
+        }
     }
 
-    override var2[string]* getDictionary()
-    {
-        return &_data;
-    }
 }
 
 public struct var2
@@ -322,6 +326,7 @@ public struct var2
         case Type.Boolean:
         case Type.Floating:
         case Type.Integral:
+        case Type.String:
         case Type.Object:
         case Type.Function:
             static if (is(T == bool))
@@ -332,19 +337,9 @@ public struct var2
                 return to!T(this._value.getIntegral());
             else static if (isSomeString!T)
                 return this._value.getString();
-            /+
-            else if (isAssociativeArray!r)
-            {
-                var2[string] *dict = this._value.getDictionary();
-                if (!dict) return T.init;
-                T ret;
-                foreach (k, v; (*dict))
-                    ret[to!(KeyType!T)(k)] = v.get!(ValueType!T);
-                return ret;
-            }
-            +/
             else
                 return T.init;
+        /+
         case Type.String:
             static if (__traits(compiles, to!T(this._value.getString)))
             {
@@ -359,6 +354,7 @@ public struct var2
             }
             else
                 return T.init;
+        +/
         case Type.Array:
             ////Vector vec = this._payload.get!Vector;
             static if (isSomeString!T)
@@ -595,5 +591,17 @@ unittest
     (x1.toString).should.equal("Floating(123.45)");
     (x1.get!long).should.equal(123);
     (x1.get!real).should.be.approximately(123.45, 0.01);
-    (x1.get!string).should.equal("123.45");
+}
+
+unittest
+{
+    scope (success)
+        writeln("[unittest(@", __FILE__, ":", __LINE__, ") succeeded]");
+    var2 x2 = 123;
+    writeln(__LINE__, ":", x2);
+    (x2.get!string).should.equal("123");
+    (x2.toString).should.equal("Integral(123)");
+    (x2.get!long).should.equal(123);
+    (x2.get!real).should.equal(123);
+    (x2.get!string).should.equal("123");
 }
