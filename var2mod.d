@@ -339,7 +339,7 @@ public struct var2
                 return this._value.getString();
             else
                 return T.init;
-        /+
+            /+
         case Type.String:
             static if (__traits(compiles, to!T(this._value.getString)))
             {
@@ -573,7 +573,7 @@ unittest
         writeln("[unittest(@", __FILE__, ":", __LINE__, ") succeeded]");
     //true.should.equal(false).because("this is a failing assert");
     var2 x0 = true;
-    writeln(__LINE__, ":", x0);
+    writeln(__LINE__, "==>", x0);
     (x0.get!string).should.equal("true");
     (x0.toString).should.equal("Boolean(true)");
     (x0.get!long).should.equal(1);
@@ -586,7 +586,7 @@ unittest
     scope (success)
         writeln("[unittest(@", __FILE__, ":", __LINE__, ") succeeded]");
     var2 x1 = 123.45;
-    writeln(__LINE__, ":", x1);
+    writeln(__LINE__, "==>", x1);
     (x1.get!string).should.equal("123.45");
     (x1.toString).should.equal("Floating(123.45)");
     (x1.get!long).should.equal(123);
@@ -598,10 +598,24 @@ unittest
     scope (success)
         writeln("[unittest(@", __FILE__, ":", __LINE__, ") succeeded]");
     var2 x2 = 123;
-    writeln(__LINE__, ":", x2);
+    writeln(__LINE__, "==>", x2);
     (x2.get!string).should.equal("123");
     (x2.toString).should.equal("Integral(123)");
     (x2.get!long).should.equal(123);
     (x2.get!real).should.equal(123);
     (x2.get!string).should.equal("123");
+}
+
+unittest
+{
+    scope (success)
+        writeln("[unittest(@", __FILE__, ":", __LINE__, ") succeeded]");
+    int add2(int a, int b)
+    {
+        return a + b;
+    }
+    var2 x3 = &add2;
+    writeln(__LINE__, "==>", x3);
+    var2 answer = x3(11, 22.5);
+    answer.toString.should.equal("Integral(33)");
 }
