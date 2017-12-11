@@ -88,21 +88,6 @@
    ([(shift f12)] . global-whitespace-mode)))
 
 (setq-default tab-width 4 indent-tabs-mode nil)
-'(add-hook 'd-mode-hook
-          (lambda ()
-            (c-set-style "bsd")
-            (setq c-basic-offset 4)
-            (setq indent-tabs-mode nil)
-            (setq tab-width 4)
-            ))
-(add-hook 'd-mode-hook ;; https://masutaka.net/chalow/2009-07-16-1.html
-          (lambda ()
-            (c-set-style "bsd")                            ;;; (a)
-            (setq c-basic-offset 4)                        ;;; (b)
-            ;; 演算式が複数行にまたがるときのオフセット
-            (c-set-offset 'statement-cont 'c-lineup-math)  ;;; (c)
-            ;; 行末のスペースやタブに色づけして警告する。
-            (setq show-trailing-whitespace t)))            ;;; (d)
 
 '(when (and (not window-system)
            (string-match "^xterm" (getenv "TERM")))
@@ -150,22 +135,37 @@
 (global-set-key [C-left]  'backward-sexp)
 
 (use-package ac-dcd :ensure t)
-    (add-hook 'd-mode-hook
-      (lambda ()
-          (auto-complete-mode t)
-          (when (featurep 'yasnippet) (yas-minor-mode-on))
-          (ac-dcd-maybe-start-server)
-          (ac-dcd-add-imports)
-          (add-to-list 'ac-sources 'ac-source-dcd)
-          (define-key d-mode-map (kbd "C-c ?") 'ac-dcd-show-ddoc-with-buffer)
-          (define-key d-mode-map (kbd "C-c .") 'ac-dcd-goto-definition)
-          (define-key d-mode-map (kbd "C-c ,") 'ac-dcd-goto-def-pop-marker)
-          (define-key d-mode-map (kbd "C-c s") 'ac-dcd-search-symbol)
+(add-hook 'd-mode-hook
+          (lambda ()
+            (c-set-style "bsd")     ;;; (a)
+            (setq c-basic-offset 4) ;;; (b)
+            ;; 演算式が複数行にまたがるときのオフセット
+            (c-set-offset 'statement-cont 'c-lineup-math) ;;; (c)
+            ;; 行末のスペースやタブに色づけして警告する。
+            (setq show-trailing-whitespace t)
+            (auto-complete-mode t)
+            (when (featurep 'yasnippet) (yas-minor-mode-on))
+            (ac-dcd-maybe-start-server)
+            (ac-dcd-add-imports)
+            (add-to-list 'ac-sources 'ac-source-dcd)
+            (define-key d-mode-map (kbd "C-c ?") 'ac-dcd-show-ddoc-with-buffer)
+            (define-key d-mode-map (kbd "C-c .") 'ac-dcd-goto-definition)
+            (define-key d-mode-map (kbd "C-c ,") 'ac-dcd-goto-def-pop-marker)
+            (define-key d-mode-map (kbd "C-c s") 'ac-dcd-search-symbol)
 
-          (when (featurep 'popwin)
-            (add-to-list 'popwin:special-display-config
-                         `(,ac-dcd-error-buffer-name :noselect t))
-            (add-to-list 'popwin:special-display-config
-                         `(,ac-dcd-document-buffer-name :position right :width 80))
-            (add-to-list 'popwin:special-display-config
-                         `(,ac-dcd-search-symbol-buffer-name :position bottom :width 5)))))
+            (when (featurep 'popwin)
+              (add-to-list 'popwin:special-display-config
+                           `(,ac-dcd-error-buffer-name :noselect t))
+              (add-to-list 'popwin:special-display-config
+                           `(,ac-dcd-document-buffer-name :position right :width 80))
+              (add-to-list 'popwin:special-display-config
+                           `(,ac-dcd-search-symbol-buffer-name :position bottom :width 5)))))
+'(add-hook 'd-mode-hook ;; https://masutaka.net/chalow/2009-07-16-1.html
+          (lambda ()
+            (c-set-style "bsd")                            ;;; (a)
+            (setq c-basic-offset 4)                        ;;; (b)
+            ;; 演算式が複数行にまたがるときのオフセット
+            (c-set-offset 'statement-cont 'c-lineup-math)  ;;; (c)
+            ;; 行末のスペースやタブに色づけして警告する。
+            (setq show-trailing-whitespace t)
+            ))            ;;; (d)

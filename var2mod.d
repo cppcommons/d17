@@ -9,25 +9,74 @@ import std.variant;
 
 public abstract class os_value
 {
-  abstract long getIntegral();
-  abstract real getFloating();
+    abstract bool getBoolean();
+    abstract long getIntegral();
+    abstract real getFloating();
+    abstract string getString();
+    abstract var2[string] *getDictionary();
 }
 
 public class os_bool_value : os_value
 {
-  private bool m_data;
-  package this(bool data)
-  {
-    m_data = data;
-  }
-  override long getIntegral()
-  {
-    return to!long(m_data);
-  }
-  override real getFloating()
-  {
-    return to!real(m_data);
-  }
+    private bool _data;
+    package this(bool data)
+    {
+        this._data = data;
+    }
+    override bool getBoolean()
+    {
+        return this._data;
+    }
+    override long getIntegral()
+    {
+        return to!long(this._data);
+    }
+    override real getFloating()
+    {
+        return to!real(this._data);
+    }
+    override string getString()
+    {
+        return this._data ? "true" : "false";
+    }
+    override var2[string] *getDictionary()
+    {
+        return null;
+    }
+}
+
+package class Dictionary : os_value
+{
+    private var2[string] _data;
+    public override string toString()
+    {
+        return to!string(this._data);
+    }
+    /+
+    package this(XXX)
+    {
+    }
+    +/
+    override bool getBoolean()
+    {
+        return false;
+    }
+    override long getIntegral()
+    {
+        return 0;
+    }
+    override real getFloating()
+    {
+        return 0;
+    }
+    override string getString()
+    {
+        return to!string(this._data);
+    }
+    override var2[string] *getDictionary()
+    {
+        return &_data;
+    }
 }
 
 public struct var2
@@ -45,6 +94,7 @@ public struct var2
 
     private Type _type;
     private Variant _payload;
+    private os_value _value;
     public Type payloadType()
     {
         return _type;
@@ -102,15 +152,27 @@ public struct var2
             final switch (payloadType)
         {
         case Type.Boolean:
-            bool val = this._payload.get!bool;
+        case Type.Object:
             static if (is(T == bool))
-                return val;
-            else static if (isFloatingPoint!T || isIntegral!T)
-                return cast(T)(val ? 1 : 0);
+                return this._value.getBoolean();
+            else static if (isFloatingPoint!T)
+                return to!T(this._value.getFloating());
+            else static if (isIntegral!T)
+                return to!T(this._value.getIntegral());
             else static if (isSomeString!T)
-                return val ? "true" : "false";
+                return this._value.getString();
+            else if (isAssociativeArray!T)
+            {
+                var2[string] *dict = this._value.getDictionary();
+                if (!dict) return T.init;
+                T ret;
+                foreach (k, v; (*dict))
+                    ret[to!(KeyType!T)(k)] = v.get!(ValueType!T);
+                return ret;
+            }
             else
                 return T.init;
+        /+
         case Type.Object:
             Dictionary dict = this._payload.get!Dictionary;
             static if (isAssociativeArray!T)
@@ -126,6 +188,7 @@ public struct var2
             }
             else
                 return T.init;
+        +/
         case Type.Integral:
             long val = this._payload.get!long;
             static if (isFloatingPoint!T || isIntegral!T)
@@ -230,12 +293,14 @@ public struct var2
         else static if (is(T : var2[string]))
         {
             this._type = Type.Object;
-            Dictionary dict = new Dictionary;
+            Dictionary value = new Dictionary;
+            var2[string] *dict = value.getDictionary();
             foreach (k, v; cast(var2[string]) t)
             {
-                dict._dict[k] = v;
+                (*dict)[k] = v;
             }
-            this._payload = dict;
+            ////this._payload = dict; /**/
+            this._value = value;
         }
         else static if (isArray!T)
         {
@@ -250,7 +315,8 @@ public struct var2
         else static if (is(T == bool))
         {
             this._type = Type.Boolean;
-            this._payload = t;
+            this._payload = t; /**/
+            this._value = new os_bool_value(t);
         }
         else
             static assert(0, "unsupported type");
@@ -289,8 +355,9 @@ public struct var2
         }
         if (this.payloadType() == Type.Object)
         {
-            Dictionary dict = this._payload.get!Dictionary;
-            var2* found = name in dict._dict;
+            //Dictionary dict = this._payload.get!Dictionary;
+            var2[string] *dict = this._value.getDictionary();
+            var2* found = name in (*dict);
             if (found)
                 return (*found);
         }
@@ -306,11 +373,13 @@ public struct var2
         if (this._type != Type.Object)
         {
             this._type = Type.Object;
-            this._payload = new Dictionary;
+            //this._payload = new Dictionary;
+            this._value = new Dictionary;
         }
-        Dictionary dict = this._payload.get!Dictionary;
-        dict._dict[name] = var2(t);
-        return dict._dict[name];
+        //Dictionary dict = this._payload.get!Dictionary;
+        var2[string] *dict = this._value.getDictionary();
+        (*dict)[name] = var2(t);
+        return (*dict)[name];
     }
 
     // N.T.
@@ -353,16 +422,6 @@ public struct var2
             return to!string(this._type) ~ `(` ~ this._payload.toString ~ `)`;
             //break;
         }
-    }
-}
-
-package class Dictionary
-{
-    var2[string] _dict;
-    public override string toString()
-    {
-        //return format!`%s`(this._dict);
-        return to!string(this._dict);
     }
 }
 

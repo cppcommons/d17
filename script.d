@@ -4,6 +4,14 @@ import std.stdio;
 void main(string[] args)
 {
     import var2mod;
+    var2 x0 = true;
+    writeln(x0);
+    writeln(x0.get!string);
+    writeln(x0.get!long);
+    writeln(x0.get!int);
+    writeln(x0.get!real);
+    writeln();
+
     var2 x1 = 123.45;
     writeln(x1.get!long);
     writeln(x1.get!real);
