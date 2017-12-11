@@ -65,6 +65,7 @@ void main(string[] args)
     aa.yyy = 777;
     writeln(aa);
     writeln(aa.yyy);
+    writeln(`kanji=漢字`);
 }
 
 int add2(int a, int b)
