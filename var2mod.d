@@ -16,6 +16,7 @@ public abstract class os_value
     abstract string getString();
     abstract var2[] *getVector();
     abstract var2[string] *getDictionary();
+    abstract FuncTypeX getCallable();
 }
 
 public class os_bool_value : os_value
@@ -53,6 +54,10 @@ public class os_bool_value : os_value
     {
         return null;
     }
+    override FuncTypeX getCallable()
+    {
+        return null;
+    }
 }
 
 public class os_long_value : os_value
@@ -61,6 +66,10 @@ public class os_long_value : os_value
     package this(long data)
     {
         this._data = data;
+    }
+    public override string toString()
+    {
+        return this.getString;
     }
     override bool getBoolean()
     {
@@ -86,6 +95,10 @@ public class os_long_value : os_value
     {
         return null;
     }
+    override FuncTypeX getCallable()
+    {
+        return null;
+    }
 }
 
 public class os_real_value : os_value
@@ -94,6 +107,10 @@ public class os_real_value : os_value
     package this(real data)
     {
         this._data = data;
+    }
+    public override string toString()
+    {
+        return this.getString;
     }
     override bool getBoolean()
     {
@@ -119,6 +136,10 @@ public class os_real_value : os_value
     {
         return null;
     }
+    override FuncTypeX getCallable()
+    {
+        return null;
+    }
 }
 
 public class os_string_value : os_value
@@ -127,6 +148,10 @@ public class os_string_value : os_value
     package this(string data)
     {
         this._data = data;
+    }
+    public override string toString()
+    {
+        return this.getString;
     }
     override bool getBoolean()
     {
@@ -152,6 +177,10 @@ public class os_string_value : os_value
     {
         return null;
     }
+    override FuncTypeX getCallable()
+    {
+        return null;
+    }
 }
 
 alias var2 delegate(var2[]) FuncTypeX;
@@ -161,6 +190,10 @@ public class os_func_value : os_value
     package this(FuncTypeX data)
     {
         this._data = data;
+    }
+    public override string toString()
+    {
+        return this.getString;
     }
     override bool getBoolean()
     {
@@ -185,6 +218,10 @@ public class os_func_value : os_value
     override var2[string] *getDictionary()
     {
         return null;
+    }
+    override FuncTypeX getCallable()
+    {
+        return this._data;
     }
 }
 
@@ -221,6 +258,10 @@ package class Vector : os_value
         return &_data;
     }
     override var2[string] *getDictionary()
+    {
+        return null;
+    }
+    override FuncTypeX getCallable()
     {
         return null;
     }
@@ -262,6 +303,10 @@ package class Dictionary : os_value
     {
         return &_data;
     }
+    override FuncTypeX getCallable()
+    {
+        return null;
+    }
 }
 
 public struct var2
@@ -296,8 +341,8 @@ public struct var2
     {
         if (this.payloadType() == Type.Function)
         {
-            alias var2 delegate(var2[]) FuncType;
-            FuncType func = this._payload.get!FuncType;
+            //alias var2 delegate(var2[]) FuncType;
+            FuncTypeX func = this._value.getCallable;
             return func(args);
         }
         return var2(null);

@@ -36,8 +36,10 @@ void main(string[] args)
     writeln(`x3.get!real=`, x3.get!real);
     writeln(`x3.get!string=`, x3.get!string);
     var2 answer = x3(11, 22.5);
-    exit(0);
     writeln(`answer=`, answer);
+    writeln();
+    exit(0);
+
     var2 v;
     v = `abc`;
     writeln("[v(1)]");
