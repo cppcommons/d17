@@ -14,23 +14,28 @@ public abstract class os_value
     {
         return false;
     }
+
     long getIntegral()
     {
         return 0;
     }
+
     real getFloating()
     {
         return 0;
     }
+
     string getString();
-    var2[] *getVector()
+    var2[]* getVector()
     {
         return null;
     }
-    var2[string] *getDictionary()
+
+    var2[string]* getDictionary()
     {
         return null;
     }
+
     os_callable getCallable()
     {
         return null;
@@ -44,40 +49,31 @@ public class os_bool_value : os_value
     {
         this._data = data;
     }
+
     public override string toString()
     {
         return this.getString;
     }
+
     override bool getBoolean()
     {
         return this._data;
     }
+
     override long getIntegral()
     {
         return to!long(this._data);
     }
+
     override real getFloating()
     {
         return to!real(this._data);
     }
+
     override string getString()
     {
         return this._data ? "true" : "false";
     }
-    /+
-    override var2[] *getVector()
-    {
-        return null;
-    }
-    override var2[string] *getDictionary()
-    {
-        return null;
-    }
-    override os_callable getCallable()
-    {
-        return null;
-    }
-    +/
 }
 
 public class os_long_value : os_value
@@ -87,40 +83,31 @@ public class os_long_value : os_value
     {
         this._data = data;
     }
+
     public override string toString()
     {
         return this.getString;
     }
+
     override bool getBoolean()
     {
         return (this._data != 0);
     }
+
     override long getIntegral()
     {
         return this._data;
     }
+
     override real getFloating()
     {
         return to!real(this._data);
     }
+
     override string getString()
     {
         return to!string(this._data);
     }
-    /+
-    override var2[] *getVector()
-    {
-        return null;
-    }
-    override var2[string] *getDictionary()
-    {
-        return null;
-    }
-    override os_callable getCallable()
-    {
-        return null;
-    }
-    +/
 }
 
 public class os_real_value : os_value
@@ -130,40 +117,31 @@ public class os_real_value : os_value
     {
         this._data = data;
     }
+
     public override string toString()
     {
         return this.getString;
     }
+
     override bool getBoolean()
     {
         return (this._data != 0);
     }
+
     override long getIntegral()
     {
         return to!long(this._data);
     }
+
     override real getFloating()
     {
         return this._data;
     }
+
     override string getString()
     {
         return to!string(this._data);
     }
-    /+
-    override var2[] *getVector()
-    {
-        return null;
-    }
-    override var2[string] *getDictionary()
-    {
-        return null;
-    }
-    override os_callable getCallable()
-    {
-        return null;
-    }
-    +/
 }
 
 public class os_string_value : os_value
@@ -173,40 +151,31 @@ public class os_string_value : os_value
     {
         this._data = data;
     }
+
     public override string toString()
     {
         return this.getString;
     }
+
     override bool getBoolean()
     {
         return !this._data.empty;
     }
+
     override long getIntegral()
     {
         return to!long(this._data);
     }
+
     override real getFloating()
     {
         return to!real(this._data);
     }
+
     override string getString()
     {
         return this._data;
     }
-    /+
-    override var2[] *getVector()
-    {
-        return null;
-    }
-    override var2[string] *getDictionary()
-    {
-        return null;
-    }
-    override os_callable getCallable()
-    {
-        return null;
-    }
-    +/
 }
 
 alias var2 delegate(var2[]) os_callable;
@@ -217,38 +186,17 @@ public class os_func_value : os_value
     {
         this._data = data;
     }
+
     public override string toString()
     {
         return this.getString;
     }
-    /+
-    override bool getBoolean()
-    {
-        return false;
-    }
-    override long getIntegral()
-    {
-        return 0;
-    }
-    override real getFloating()
-    {
-        return 0;
-    }
-    +/
+
     override string getString()
     {
         return `<function>`;
     }
-    /+
-    override var2[] *getVector()
-    {
-        return null;
-    }
-    override var2[string] *getDictionary()
-    {
-        return null;
-    }
-    +/
+
     override os_callable getCallable()
     {
         return this._data;
@@ -267,38 +215,15 @@ package class Vector : os_value
     {
     }
     +/
-    /+
-    override bool getBoolean()
-    {
-        return false;
-    }
-    override long getIntegral()
-    {
-        return 0;
-    }
-    override real getFloating()
-    {
-        return 0;
-    }
-    +/
     override string getString()
     {
         return to!string(this._data);
     }
-    override var2[] *getVector()
+
+    override var2[]* getVector()
     {
         return &_data;
     }
-    /+
-    override var2[string] *getDictionary()
-    {
-        return null;
-    }
-    override os_callable getCallable()
-    {
-        return null;
-    }
-    +/
 }
 
 package class Dictionary : os_value
@@ -313,40 +238,15 @@ package class Dictionary : os_value
     {
     }
     +/
-    /+
-    override bool getBoolean()
-    {
-        return false;
-    }
-    override long getIntegral()
-    {
-        return 0;
-    }
-    override real getFloating()
-    {
-        return 0;
-    }
-    +/
     override string getString()
     {
         return to!string(this._data);
     }
-    /+
-    override var2[] *getVector()
-    {
-        return null;
-    }
-    +/
-    override var2[string] *getDictionary()
+
+    override var2[string]* getDictionary()
     {
         return &_data;
     }
-    /+
-    override os_callable getCallable()
-    {
-        return null;
-    }
-    +/
 }
 
 public struct var2
@@ -381,7 +281,6 @@ public struct var2
     {
         if (this.payloadType() == Type.Function)
         {
-            //alias var2 delegate(var2[]) FuncType;
             os_callable func = this._value.getCallable;
             return func(args);
         }
@@ -474,10 +373,13 @@ public struct var2
                 }
                 else
                 {
-                    var2[] *vec = this._value.getVector();
-                    alias ElemType = ElementType!T;
-                    foreach (item; (*vec))
-                        ret ~= item.get!(ElemType);
+                    var2[]* vec = this._value.getVector();
+                    if (vec)
+                    {
+                        alias ElemType = ElementType!T;
+                        foreach (item; (*vec))
+                            ret ~= item.get!(ElemType);
+                    }
                 }
                 return ret;
             }
@@ -531,7 +433,7 @@ public struct var2
         {
             this._type = Type.Object;
             Dictionary value = new Dictionary;
-            var2[string] *dict = value.getDictionary();
+            var2[string]* dict = value.getDictionary();
             foreach (k, v; cast(var2[string]) t)
             {
                 (*dict)[k] = v;
@@ -543,8 +445,9 @@ public struct var2
         {
             this._type = Type.Array;
             Vector value = new Vector;
-            var2[] *vec = value.getVector();
+            var2[]* vec = value.getVector();
             (*vec).length = t.length;
+            writeln(`t.length=`, t.length);
             static if (!is(T == void[]))
                 foreach (i, item; t)
                     (*vec)[i] = var2(item);
@@ -585,14 +488,14 @@ public struct var2
         }
         if (name == "length" && this.payloadType() == Type.Array)
         {
-            var2[] *vec = this._value.getVector;
+            var2[]* vec = this._value.getVector;
             var2* tmp = new var2;
             *tmp = (*vec).length;
             return *tmp;
         }
         if (this.payloadType() == Type.Object)
         {
-            var2[string] *dict = this._value.getDictionary();
+            var2[string]* dict = this._value.getDictionary();
             var2* found = name in (*dict);
             if (found)
                 return (*found);
@@ -613,7 +516,7 @@ public struct var2
             this._value = new Dictionary;
         }
         //Dictionary dict = this._payload.get!Dictionary;
-        var2[string] *dict = this._value.getDictionary();
+        var2[string]* dict = this._value.getDictionary();
         (*dict)[name] = var2(t);
         return (*dict)[name];
     }
@@ -623,7 +526,7 @@ public struct var2
     {
         if (_type == Type.Array)
         {
-            var2[] *vec = this._value.getVector;
+            var2[]* vec = this._value.getVector;
             if (idx < (*vec).length)
                 return (*vec)[idx];
         }
@@ -637,7 +540,7 @@ public struct var2
         if (this._type == Type.Array)
         {
             //Vector vec = this._payload.get!Vector;
-            var2[] *vec = this._value.getVector();
+            var2[]* vec = this._value.getVector();
             if (idx >= (*vec).length)
                 (*vec).length = idx + 1;
             (*vec)[idx] = t;
@@ -652,15 +555,13 @@ public struct var2
         switch (this._type)
         {
         case Type.Array:
-            return `Array` ~ to!string(this._payload.get!Vector);
+            return `Array` ~ this._value.toString;
         case Type.Object:
-            return `Object` ~ to!string(this._payload.get!Dictionary);
+            return `Object` ~ this._value.toString;
         default:
-            return to!string(this._type) ~
-                `(` ~ this._value.toString ~ `)`;
+            return to!string(this._type) ~ `(` ~ this._value.toString ~ `)`;
             //return to!string(this._type) ~ this._value.toString;
             //break;
         }
     }
 }
-

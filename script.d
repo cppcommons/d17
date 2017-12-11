@@ -38,7 +38,7 @@ void main(string[] args)
     var2 answer = x3(11, 22.5);
     writeln(`answer=`, answer);
     writeln();
-    exit(0);
+    //exit(0);
 
     var2 v;
     v = `abc`;
