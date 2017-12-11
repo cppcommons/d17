@@ -10,16 +10,23 @@ import std.variant;
 public abstract class os_value
 {
   abstract long getIntegral();
+  abstract real getFloating();
 }
 
 public class os_bool_value : os_value
 {
+  private bool m_data;
   package this(bool data)
   {
+    m_data = data;
   }
   override long getIntegral()
   {
-    return 0;
+    return to!long(m_data);
+  }
+  override real getFloating()
+  {
+    return to!real(m_data);
   }
 }
 

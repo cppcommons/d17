@@ -1,3 +1,4 @@
+#! bash -uvx
 rm -f edub2.exe
 rm -rf edub2.exe.bin
 dmd -of=edub2.exe -od=edub2.exe.bin -g -debug edub2.d

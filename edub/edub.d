@@ -884,12 +884,14 @@ int main(string[] args)
 	if (dub_cmdline.canFind("debug"))
 	{
 		writeln(jsonText2);
+        stdout.flush();
 		exit(0);
 	}
 	if (dub_cmdline.length >= 2 && dub_cmdline[1] == "generate")
 	{
 		chdir(folder_name);
 		writeln(dub_cmdline);
+        stdout.flush();
 		int rc = emake_run_command(dub_cmdline);
 		return rc;
 	}
@@ -900,6 +902,7 @@ int main(string[] args)
 		dub_cmdline ~= run_args;
 	}
 	writeln(dub_cmdline);
+    stdout.flush();
 	int rc = emake_run_command(dub_cmdline);
 	if (rc == 0)
 	{
