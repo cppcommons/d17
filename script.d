@@ -76,14 +76,14 @@ void main(string[] args)
     fargs ~= arg1;
     fargs ~= var2(44);
     var2 answer2 = x3.apply(fargs);
-    writeln(answer2);
+    writeln(`answer2(A)=`, answer2);
     answer2 = x3.apply([var2(1), var2(22)]);
-    writeln(answer2);
+    writeln(`answer2(B)=`, answer2);
 
     var2[string] _aa;
     var2 aa = _aa;
     aa[`x`] = 123;
-    writeln(aa.get!(var2[string]));
+    ////writeln(aa.get!(var2[string]));
     writeln(aa);
     writeln(aa[`x`]);
     aa.yyy = 777;
