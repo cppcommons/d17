@@ -31,7 +31,7 @@ public abstract class os_value
     {
         return null;
     }
-    Callable getCallable()
+    os_callable getCallable()
     {
         return null;
     }
@@ -73,7 +73,7 @@ public class os_bool_value : os_value
     {
         return null;
     }
-    override Callable getCallable()
+    override os_callable getCallable()
     {
         return null;
     }
@@ -116,7 +116,7 @@ public class os_long_value : os_value
     {
         return null;
     }
-    override Callable getCallable()
+    override os_callable getCallable()
     {
         return null;
     }
@@ -159,7 +159,7 @@ public class os_real_value : os_value
     {
         return null;
     }
-    override Callable getCallable()
+    override os_callable getCallable()
     {
         return null;
     }
@@ -202,18 +202,18 @@ public class os_string_value : os_value
     {
         return null;
     }
-    override Callable getCallable()
+    override os_callable getCallable()
     {
         return null;
     }
     +/
 }
 
-alias var2 delegate(var2[]) Callable;
+alias var2 delegate(var2[]) os_callable;
 public class os_func_value : os_value
 {
-    private Callable _data;
-    package this(Callable data)
+    private os_callable _data;
+    package this(os_callable data)
     {
         this._data = data;
     }
@@ -249,7 +249,7 @@ public class os_func_value : os_value
         return null;
     }
     +/
-    override Callable getCallable()
+    override os_callable getCallable()
     {
         return this._data;
     }
@@ -294,7 +294,7 @@ package class Vector : os_value
     {
         return null;
     }
-    override Callable getCallable()
+    override os_callable getCallable()
     {
         return null;
     }
@@ -342,7 +342,7 @@ package class Dictionary : os_value
         return &_data;
     }
     /+
-    override Callable getCallable()
+    override os_callable getCallable()
     {
         return null;
     }
@@ -382,7 +382,7 @@ public struct var2
         if (this.payloadType() == Type.Function)
         {
             //alias var2 delegate(var2[]) FuncType;
-            Callable func = this._value.getCallable;
+            os_callable func = this._value.getCallable;
             return func(args);
         }
         return var2(null);
@@ -501,7 +501,7 @@ public struct var2
         else static if (isCallable!T)
         {
             this._type = Type.Function;
-            Callable func = delegate var2(var2[] args) {
+            os_callable func = delegate var2(var2[] args) {
                 var2 ret;
                 ParameterTypeTuple!T fargs;
                 foreach (idx, a; fargs)
