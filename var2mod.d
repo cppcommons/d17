@@ -10,13 +10,31 @@ import std.variant;
 
 public abstract class os_value
 {
-    abstract bool getBoolean();
-    abstract long getIntegral();
-    abstract real getFloating();
-    abstract string getString();
-    abstract var2[] *getVector();
-    abstract var2[string] *getDictionary();
-    abstract FuncTypeX getCallable();
+    /*abstract*/ bool getBoolean()
+    {
+        return false;
+    }
+    /*abstract*/ long getIntegral()
+    {
+        return 0;
+    }
+    /*abstract*/ real getFloating()
+    {
+        return 0;
+    }
+    /*abstract*/ string getString();
+    /*abstract*/ var2[] *getVector()
+    {
+        return null;
+    }
+    /*abstract*/ var2[string] *getDictionary()
+    {
+        return null;
+    }
+    /*abstract*/ FuncTypeX getCallable()
+    {
+        return null;
+    }
 }
 
 public class os_bool_value : os_value
@@ -46,6 +64,7 @@ public class os_bool_value : os_value
     {
         return this._data ? "true" : "false";
     }
+    /+
     override var2[] *getVector()
     {
         return null;
@@ -58,6 +77,7 @@ public class os_bool_value : os_value
     {
         return null;
     }
+    +/
 }
 
 public class os_long_value : os_value
