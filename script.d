@@ -3,14 +3,15 @@ import std.stdio;
 
 private void exit(int code)
 {
-	import std.c.stdlib;
+    import std.c.stdlib;
 
-	std.c.stdlib.exit(code);
+    std.c.stdlib.exit(code);
 }
 
 void main(string[] args)
 {
     import var2mod;
+
     var2 x0 = true;
     writeln(x0);
     writeln(`x0.get!string=`, x0.get!string);

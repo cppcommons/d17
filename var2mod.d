@@ -565,3 +565,35 @@ public struct var2
         }
     }
 }
+
+version (unittest)
+{
+    import fluent.asserts;
+}
+
+unittest
+{
+    scope (success)
+        writeln("[unittest(@", __FILE__, ":", __LINE__, ") succeeded]");
+    //true.should.equal(false).because("this is a failing assert");
+    var2 x0 = true;
+    writeln(__LINE__, ":", x0);
+    (x0.get!string).should.equal("true");
+    (x0.toString).should.equal("Boolean(true)");
+    (x0.get!long).should.equal(1);
+    (x0.get!int).should.equal(1);
+    (x0.get!real).should.equal(1);
+}
+
+unittest
+{
+    scope (success)
+        writeln("[unittest(@", __FILE__, ":", __LINE__, ") succeeded]");
+    var2 x1 = 123.45;
+    writeln(__LINE__, ":", x1);
+    (x1.get!string).should.equal("123.45");
+    (x1.toString).should.equal("Floating(123.45)");
+    (x1.get!long).should.equal(123);
+    (x1.get!real).should.be.approximately(123.45, 0.01);
+    (x1.get!string).should.equal("123.45");
+}
