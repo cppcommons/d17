@@ -10,28 +10,28 @@ import std.variant;
 
 public abstract class os_value
 {
-    /*abstract*/ bool getBoolean()
+    bool getBoolean()
     {
         return false;
     }
-    /*abstract*/ long getIntegral()
+    long getIntegral()
     {
         return 0;
     }
-    /*abstract*/ real getFloating()
+    real getFloating()
     {
         return 0;
     }
-    /*abstract*/ string getString();
-    /*abstract*/ var2[] *getVector()
+    string getString();
+    var2[] *getVector()
     {
         return null;
     }
-    /*abstract*/ var2[string] *getDictionary()
+    var2[string] *getDictionary()
     {
         return null;
     }
-    /*abstract*/ FuncTypeX getCallable()
+    Callable getCallable()
     {
         return null;
     }
@@ -73,7 +73,7 @@ public class os_bool_value : os_value
     {
         return null;
     }
-    override FuncTypeX getCallable()
+    override Callable getCallable()
     {
         return null;
     }
@@ -116,7 +116,7 @@ public class os_long_value : os_value
     {
         return null;
     }
-    override FuncTypeX getCallable()
+    override Callable getCallable()
     {
         return null;
     }
@@ -159,7 +159,7 @@ public class os_real_value : os_value
     {
         return null;
     }
-    override FuncTypeX getCallable()
+    override Callable getCallable()
     {
         return null;
     }
@@ -202,18 +202,18 @@ public class os_string_value : os_value
     {
         return null;
     }
-    override FuncTypeX getCallable()
+    override Callable getCallable()
     {
         return null;
     }
     +/
 }
 
-alias var2 delegate(var2[]) FuncTypeX;
+alias var2 delegate(var2[]) Callable;
 public class os_func_value : os_value
 {
-    private FuncTypeX _data;
-    package this(FuncTypeX data)
+    private Callable _data;
+    package this(Callable data)
     {
         this._data = data;
     }
@@ -249,7 +249,7 @@ public class os_func_value : os_value
         return null;
     }
     +/
-    override FuncTypeX getCallable()
+    override Callable getCallable()
     {
         return this._data;
     }
@@ -294,7 +294,7 @@ package class Vector : os_value
     {
         return null;
     }
-    override FuncTypeX getCallable()
+    override Callable getCallable()
     {
         return null;
     }
@@ -342,7 +342,7 @@ package class Dictionary : os_value
         return &_data;
     }
     /+
-    override FuncTypeX getCallable()
+    override Callable getCallable()
     {
         return null;
     }
@@ -382,7 +382,7 @@ public struct var2
         if (this.payloadType() == Type.Function)
         {
             //alias var2 delegate(var2[]) FuncType;
-            FuncTypeX func = this._value.getCallable;
+            Callable func = this._value.getCallable;
             return func(args);
         }
         return var2(null);
@@ -501,7 +501,7 @@ public struct var2
         else static if (isCallable!T)
         {
             this._type = Type.Function;
-            FuncTypeX func = delegate var2(var2[] args) {
+            Callable func = delegate var2(var2[] args) {
                 var2 ret;
                 ParameterTypeTuple!T fargs;
                 foreach (idx, a; fargs)
