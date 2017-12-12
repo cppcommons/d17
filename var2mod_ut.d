@@ -90,7 +90,5 @@ unittest
     (x5.get!long).should.equal(0);
     Assert.equal(true, isNaN(x5.get!real));
     (x5.get!string).should.equal("kanji=漢字");
-    //real dummy;
-    //Assert.equal(true, isNaN(dummy));
 }
 
