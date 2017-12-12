@@ -22,6 +22,8 @@
 ;(global-set-key (kbd "\e <right>") 'windmove-right)
 ;(global-set-key (kbd "\C-x <kp-add>") 'balance-windows)
 
+(set-face-attribute 'default nil :height 135)
+
 (when (eq window-system 'w32)
   (custom-set-faces
    '(default ((t
