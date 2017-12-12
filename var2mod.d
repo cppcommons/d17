@@ -50,10 +50,12 @@ version (all)
         package this()
         {
         }
+
         public override string toString()
         {
             return `null`;
         }
+
         override string getString()
         {
             return `null`;
@@ -182,12 +184,26 @@ version (all)
 
         override long getIntegral()
         {
-            return to!long(this._data);
+            try
+            {
+                return to!long(this._data);
+            }
+            catch (Exception ex)
+            {
+                return 0;
+            }
         }
 
         override real getFloating()
         {
-            return to!real(this._data);
+            try
+            {
+                return to!real(this._data);
+            }
+            catch (Exception ex)
+            {
+                return real.nan;
+            }
         }
 
         override string getString()
@@ -348,7 +364,8 @@ public struct var2
         case Type.Object:
         case Type.Function:
             os_value value = this._value;
-            if (payloadType == Type.Null) value = cast(os_value)os_null_value._singleton;
+            if (payloadType == Type.Null)
+                value = cast(os_value) os_null_value._singleton;
             static if (is(T == bool))
                 return value.getBoolean();
             else static if (isFloatingPoint!T)
@@ -583,75 +600,3 @@ public struct var2
         }
     }
 }
-
-version (unittest)
-{
-    import fluent.asserts;
-}
-
-unittest
-{
-    scope (success)
-        writeln("[unittest(@", __FILE__, ":", __LINE__, ") succeeded]");
-    //true.should.equal(false).because("this is a failing assert");
-    var2 x0 = true;
-    writeln(__LINE__, "==>", x0);
-    (x0.get!string).should.equal("true");
-    (x0.toString).should.equal("Boolean(true)");
-    (x0.get!long).should.equal(1);
-    (x0.get!int).should.equal(1);
-    (x0.get!real).should.equal(1);
-}
-
-unittest
-{
-    scope (success)
-        writeln("[unittest(@", __FILE__, ":", __LINE__, ") succeeded]");
-    var2 x1 = 123.45;
-    writeln(__LINE__, "==>", x1);
-    (x1.get!string).should.equal("123.45");
-    (x1.toString).should.equal("Floating(123.45)");
-    (x1.get!long).should.equal(123);
-    (x1.get!real).should.be.approximately(123.45, 0.01);
-}
-
-unittest
-{
-    scope (success)
-        writeln("[unittest(@", __FILE__, ":", __LINE__, ") succeeded]");
-    var2 x2 = 123;
-    writeln(__LINE__, "==>", x2);
-    (x2.get!string).should.equal("123");
-    (x2.toString).should.equal("Integral(123)");
-    (x2.get!long).should.equal(123);
-    (x2.get!real).should.equal(123);
-    (x2.get!string).should.equal("123");
-}
-
-unittest
-{
-    scope (success)
-        writeln("[unittest(@", __FILE__, ":", __LINE__, ") succeeded]");
-    int add2(int a, int b)
-    {
-        return a + b;
-    }
-    var2 x3 = &add2;
-    writeln(__LINE__, "==>", x3);
-    var2 answer = x3(11, 22.5);
-    answer.toString.should.equal("Integral(33)");
-}
-
-unittest
-{
-    scope (success)
-        writeln("[unittest(@", __FILE__, ":", __LINE__, ") succeeded]");
-    var2 x4;
-    writeln(__LINE__, "==>", x4);
-    (x4.get!string).should.equal("null");
-    (x4.toString).should.equal("Null");
-    (x4.get!long).should.equal(0);
-    (x4.get!real).should.equal(0);
-    (x4.get!string).should.equal("null");
-}
-
