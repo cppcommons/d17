@@ -20,13 +20,23 @@ console.log(myExtension.hello());
 
 const https = require('https');
 const { URL } = require('url');
-const options = new URL('https://www.google.com');
+const options = new URL('https://raw.githubusercontent.com/cyginst/cyginst-v1/master/cyginst.bat');
+var img;
 const req = https.request(options, (res) => {
   console.log('statusCode:', res.statusCode);
   console.log('headers:', res.headers);
 
+  res.setEncoding('binary');
+  var data = [];
+
   res.on('data', (d) => {
-    process.stdout.write(d);
+    //process.stdout.write(d);
+    data.push( new Buffer( d, 'binary' ) );
+  });
+  res.on('end', function () {
+    console.log('[end]');
+    img = Buffer.concat( data );
+    process.stdout.write(img);
   });
 });
 req.on('error', (e) => {
