@@ -10,6 +10,7 @@ set PATH=%PATH%;E:\opt\cmder-v1.3.3\vendor\git-for-windows\bin
 set PATH=%PATH%;E:\opt\cmake-3.9.4-win64-x64\bin
 set PATH=%PATH%;E:\opt\codeblocks-16.01mingw-nosetup
 set PATH=%PATH%;C:\ProgramData\chocolatey\bin
+set PATH=%PATH%;E:\opt\node-v8.9.3-win-x86
 @echo on
 ::chcp 65001
 ::call "C:\Program Files (x86)\Microsoft Visual Studio\VC98\Bin\VCVARS32.BAT"
