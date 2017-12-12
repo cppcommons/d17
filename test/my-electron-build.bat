@@ -1,12 +1,14 @@
-del package.json
-rmdir /s /q node_modules
-
 @setlocal
 set PATH=C:\Windows\System32
+::set PATH=%PATH%;E:\opt\node-v9.2.1-win-x86
 set PATH=%PATH%;E:\opt\node-v8.9.3-win-x86
+::set PATH=%PATH%;E:\opt\node-v7.10.1-win-x86
 set PATH=%PATH%;C:\python27
 call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86
 @echo on
+
+del package.json
+rmdir /s /q node_modules
 
 call npm init -y
 call npm install electron ffi ref

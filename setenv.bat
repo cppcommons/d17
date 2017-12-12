@@ -1,6 +1,8 @@
 @echo off
 set PATH=C:\Windows\System32
+::set PATH=%PATH%;E:\opt\node-v9.2.1-win-x86
 set PATH=%PATH%;E:\opt\node-v8.9.3-win-x86
+::set PATH=%PATH%;E:\opt\node-v7.10.1-win-x86
 set PATH=%PATH%;C:\python27
 set PATH=%PATH%;C:\Program Files\Microsoft VS Code\bin
 set PATH=%PATH%;C:\D\dmd2\windows\bin
