@@ -24,7 +24,7 @@ version (all)
 
         real getFloating()
         {
-            return 0;
+            return real.nan;
         }
 
         string getString();

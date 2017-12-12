@@ -6,6 +6,7 @@ version (unittest)
 {
     import fluent.asserts;
     import std.stdio;
+    import std.math: isNaN;
 }
 
 unittest
@@ -59,6 +60,10 @@ unittest
     writeln(__LINE__, "==>", x3);
     var2 answer = x3(11, 22.5);
     answer.toString.should.equal("Integral(33)");
+    (x3.toString).should.equal("Function(<function>)");
+    (x3.get!long).should.equal(0);
+    Assert.equal(true, isNaN(x3.get!real));
+    (x3.get!string).should.equal("<function>");
 }
 
 unittest
@@ -70,7 +75,7 @@ unittest
     (x4.get!string).should.equal("null");
     (x4.toString).should.equal("Null");
     (x4.get!long).should.equal(0);
-    (x4.get!real).should.equal(0);
+    Assert.equal(true, isNaN(x4.get!real));
     (x4.get!string).should.equal("null");
 }
 
@@ -83,8 +88,9 @@ unittest
     (x5.get!string).should.equal("kanji=漢字");
     (x5.toString).should.equal("String(kanji=漢字)");
     (x5.get!long).should.equal(0);
-    import std.math: isNaN;
     Assert.equal(true, isNaN(x5.get!real));
     (x5.get!string).should.equal("kanji=漢字");
+    //real dummy;
+    //Assert.equal(true, isNaN(dummy));
 }
 
