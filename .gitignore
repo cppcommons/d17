@@ -1,3 +1,5 @@
+node_modules
+package-lock.json
 /.bash_history
 cyginst.bat
 /os1
@@ -14,6 +16,8 @@ cyginst.bat
 *.o
 *.obj
 *.dll
+*.node
+*.exp
 *.exe
 *.lib
 *.dll.bin
