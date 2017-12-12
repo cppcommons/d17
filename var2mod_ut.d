@@ -85,10 +85,24 @@ unittest
         writeln("[unittest(@", __FILE__, ":", __LINE__, ") succeeded]");
     var2 x5 = "kanji=漢字";
     writeln(__LINE__, "==>", x5);
-    (x5.get!string).should.equal("kanji=漢字");
     (x5.toString).should.equal("String(kanji=漢字)");
     (x5.get!long).should.equal(0);
     Assert.equal(true, isNaN(x5.get!real));
     (x5.get!string).should.equal("kanji=漢字");
+}
+
+unittest
+{
+    scope (success)
+        writeln("[unittest(@", __FILE__, ":", __LINE__, ") succeeded]");
+    var2[string] obj;
+    obj[`a`] = `abc`;
+    obj[`b`] = 123.45;
+    var2 x6 = obj;
+    writeln(__LINE__, "==>", x6);
+    (x6.toString).should.equal(`Object["b":Floating(123.45), "a":String(abc)]`);
+    (x6.get!long).should.equal(0);
+    Assert.equal(true, isNaN(x6.get!real));
+    (x6.get!string).should.equal(`["b":Floating(123.45), "a":String(abc)]`);
 }
 
