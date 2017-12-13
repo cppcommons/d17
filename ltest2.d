@@ -14,7 +14,7 @@ private luaL_Reg reg[] = [{"getclip", &l_getclip}, {null, null}];
 extern (C) export int luaopen_ltest2(lua_State* L)
 {
     import std.stdio;
-    writeln("luaopen_ltest2");
+    //writeln("luaopen_ltest2");
     luaL_newlib(L, reg);
     return 1;
 }
