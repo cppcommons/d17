@@ -98,6 +98,9 @@
 (add-to-list 'cq-lexer-alist
              (list 'js2-mode *cq-lexer-for-C*))
 
+(add-to-list 'cq-lexer-alist
+             (list 'd-mode *cq-lexer-for-C*))
+
 (defmethod !cq-forward-1exp ((this <cq-lexer-for-lisp>)
                              &optional $limit)
   (let (($opoint (point)))
