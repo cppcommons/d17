@@ -12,6 +12,7 @@ rmdir /s /q node_modules
 ::del package.json
 ::call npm init -y
 ::call npm install --save electron ffi ref
+::call npm install --save electron-packager
 call npm install
 
 call npm config set msvs_version 2015

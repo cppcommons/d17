@@ -1,0 +1,1 @@
+electron-packager ｛ソースディレクトリ｝ ｛アプリ名｝ --platform=｛プラットフォーム｝ --arch=｛アーキテクチャ｝ --version （バージョン｝ ［その他のオプション ...］
