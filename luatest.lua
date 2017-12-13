@@ -1,2 +1,5 @@
 local sub = require( 'ltest' )
-print( sub.getclip() ) 
+print( sub.getclip() )
+local json = loadfile("json.lua")()
+print( json.encode({ 1, 2, 3, { x = 10 } }) )
+sub.process_json( json.encode({ 1, 2, 3, { x = 10 } }) )

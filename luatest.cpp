@@ -9,8 +9,6 @@ extern "C"
 #include "lauxlib.h" /* luaL_* */
 }
 
-extern "C" __declspec(dllexport) int luaopen_ltest(lua_State *L);
-
 static int l_getclip(lua_State *L)
 {
     const char *s = "<getclip>";
@@ -18,8 +16,17 @@ static int l_getclip(lua_State *L)
     return 1;
 }
 
+static int l_process_json(lua_State *L)
+{
+    const char *arg1 = luaL_checkstring(L, 1);
+    printf("[process_json()]arg1: %s\n", arg1);
+    return 0;
+}
+
 static luaL_Reg reg[] = {
     {"getclip", l_getclip},
+    {"process_json", l_process_json},
+    
     {NULL, NULL}};
 
 extern "C" __declspec(dllexport) int luaopen_ltest(lua_State *L)
