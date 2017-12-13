@@ -171,3 +171,5 @@
             ;; 行末のスペースやタブに色づけして警告する。
             (setq show-trailing-whitespace t)
             ))            ;;; (d)
+
+(load "~/c-quick-2.el")
