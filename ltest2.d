@@ -2,6 +2,25 @@ import lua.types;
 import lua.functions;
 import lua.macros;
 
+extern (Windows) export int EntryA(const char *arg)
+{
+    import std.stdio : writeln, readln;
+	import core.stdc.stdio; // : freopen, stderr, stdin, stdout;
+	import core.sys.windows.windows;
+	import core.sys.windows.winbase;
+
+	//AllocConsole();
+	if (!AttachConsole(ATTACH_PARENT_PROCESS))
+		AllocConsole();
+	freopen("CONIN$", "r", stdin);
+	freopen("CONOUT$", "w", stdout);
+	freopen("CONOUT$", "w", stderr);
+    writeln("[EntryA()]");
+    //writeln(arg);
+    //readln();
+    return 1234;
+}
+
 private extern (C) int l_getclip(lua_State* L) nothrow
 {
     const char* s = "<getclip2>";

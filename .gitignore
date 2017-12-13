@@ -1,4 +1,5 @@
 *.asar
+*.dll.def
 /nwjs
 /electron-api-demos
 node_modules
