@@ -5,10 +5,5 @@ set PATH=%PATH%;E:\opt\node-v8.9.3-win-x86
 ::set PATH=%PATH%;E:\opt\node-v7.10.1-win-x86
 ::set PATH=%PATH%;E:\opt\node-v7.9.0-win-x86
 set PATH=%PATH%;C:\python27
-::npm install -g enclose@1.3.1
-::npm install -g enclose@2.0.0
-call npm install -g pkg
-rmdir /s /q node_modules
-::npm install --save node-thrust ffi ref
-npm install
+pkg . --targets node8-win-x86
 @endlocal
