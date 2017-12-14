@@ -84,6 +84,9 @@
 (setq cq-lexer-alist nil)
 
 (add-to-list 'cq-lexer-alist
+             (list 'lisp-mode *cq-lexer-for-lisp*))
+
+(add-to-list 'cq-lexer-alist
              (list 'emacs-lisp-mode *cq-lexer-for-lisp*))
 
 (add-to-list 'cq-lexer-alist
