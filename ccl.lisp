@@ -7,3 +7,4 @@
                      (:signed 32) 11 (:signed 32) 22
                      (:signed 32)))
 (print answer)
+(quit)

@@ -37,3 +37,4 @@ cyginst.bat
 ms2inst.bat
 .binaries
 \#*\#
+/chicken-4.13.0
