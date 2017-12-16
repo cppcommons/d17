@@ -5,4 +5,5 @@
 ;(declare (uses bar))
 
 (load-library 'bar)
+
 (write (fac 10)) (newline)
