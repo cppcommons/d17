@@ -11,7 +11,9 @@ set PATH=%PATH%;E:\opt\bin32
 ::set PATH=%PATH%;E:\opt\opt.m32\mingw32\qt5-static\bin
 ::set PATH=%PATH%;E:\opt\opt.m32\mingw32\bin
 ::set PATH=%PATH%;E:\opt\opt.m32\usr\bin
-set PATH=%PATH%;E:\opt\cmder-v1.3.3\vendor\git-for-windows\bin
+::set PATH=%PATH%;E:\opt\cmder-v1.3.3\vendor\git-for-windows\bin
+set PATH=%PATH%;E:\opt\cmder-v1.3.3\vendor\git-for-windows\cmd
+set PATH=%PATH%;E:\opt\cmder-v1.3.3\vendor\git-for-windows\mingw32\libexec\git-core
 set PATH=%PATH%;E:\opt\cmake-3.9.4-win64-x64\bin
 set PATH=%PATH%;E:\opt\codeblocks-16.01mingw-nosetup
 set PATH=%PATH%;C:\ProgramData\chocolatey\bin
@@ -21,5 +23,9 @@ set PATH=%PATH%;C:\ProgramData\chocolatey\bin
 call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86
 ::set PATH=E:\opt\opt.m32\mingw32\bin;%PATH%
 ::set PATH=E:\opt\opt.m32\usr\local\bin;%PATH%
-set PATH=E:\opt\mingw32\bin;%PATH%
+::set PATH=E:\opt\mingw32\bin;%PATH%
+set PATH=E:\d-dev\d17\d17.m32\mingw32\bin;%PATH%
+set PATH=E:\usr\local\bin;%PATH%
 @echo on
+
+git config --global core.autoCRLF false
