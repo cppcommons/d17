@@ -13,7 +13,7 @@ set PATH=%PATH%;E:\opt\bin32
 ::set PATH=%PATH%;E:\opt\opt.m32\usr\bin
 ::set PATH=%PATH%;E:\opt\cmder-v1.3.3\vendor\git-for-windows\bin
 set PATH=%PATH%;E:\opt\cmder-v1.3.3\vendor\git-for-windows\cmd
-set PATH=%PATH%;E:\opt\cmder-v1.3.3\vendor\git-for-windows\mingw32\libexec\git-core
+::set PATH=%PATH%;E:\opt\cmder-v1.3.3\vendor\git-for-windows\mingw32\libexec\git-core
 set PATH=%PATH%;E:\opt\cmake-3.9.4-win64-x64\bin
 set PATH=%PATH%;E:\opt\codeblocks-16.01mingw-nosetup
 set PATH=%PATH%;C:\ProgramData\chocolatey\bin
@@ -29,3 +29,12 @@ set PATH=E:\usr\local\bin;%PATH%
 @echo on
 
 git config --global core.autoCRLF false
+
+git config --global user.name  root
+git config --global user.email root@super-computer
+
+git config --unset-all credential.helper
+git config --global --unset-all credential.helper
+
+git config --global credential.helper manager
+git config --global credential.useHttpPath true
