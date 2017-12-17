@@ -1,0 +1,1 @@
+(declare (uses bar))
