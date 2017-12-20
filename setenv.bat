@@ -17,6 +17,7 @@ set PATH=%PATH%;E:\opt\cmder-v1.3.3\vendor\git-for-windows\cmd
 set PATH=%PATH%;E:\opt\cmake-3.9.4-win64-x64\bin
 set PATH=%PATH%;E:\opt\codeblocks-16.01mingw-nosetup
 set PATH=%PATH%;C:\ProgramData\chocolatey\bin
+set PATH=%PATH%;E:\opt\bcdgen
 @echo on
 ::chcp 65001
 ::call "C:\Program Files (x86)\Microsoft Visual Studio\VC98\Bin\VCVARS32.BAT"
@@ -24,6 +25,7 @@ call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86
 ::set PATH=E:\opt\opt.m32\mingw32\bin;%PATH%
 ::set PATH=E:\opt\opt.m32\usr\local\bin;%PATH%
 ::set PATH=E:\opt\mingw32\bin;%PATH%
+set PATH=E:\d-dev\d17\d17.m32\usr\bin;%PATH%
 set PATH=E:\d-dev\d17\d17.m32\mingw32\bin;%PATH%
 set PATH=E:\usr\local\bin;%PATH%
 @echo on
