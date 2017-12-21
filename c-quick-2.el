@@ -30,7 +30,7 @@
 (global-set-key (kbd "<up>")       'cq-up-key)
 (global-set-key (kbd "<right>")    'cq-right-key)
 (global-set-key (kbd "<left>")     'cq-left-key)
-(global-set-key (kbd "C-z")        'cq-toggle-mode)
+;;;;(global-set-key (kbd "C-z")        'cq-toggle-mode)
 (global-set-key (kbd "M-w")        'cq-copy-region)
 (global-set-key (kbd "C-w")        'cq-kill-region)
 (global-set-key (kbd "C-M-\\")     'cq-indent-region)
@@ -45,8 +45,11 @@
 
 (global-set-key (kbd "<C-right>")  'cq-right-quick)
 (global-set-key (kbd "<C-left>")   'cq-left-quick)
-(global-set-key (kbd "<C-up>")     'cq-up-quick)
-(global-set-key (kbd "<C-down>")   'cq-down-quick)
+(global-set-key (kbd "<C-up>")     'cq-slide-up)
+(global-set-key (kbd "<C-down>")   'cq-slide-down)
+
+(global-set-key (kbd "<C-prior>")  'cq-up-quick)
+(global-set-key (kbd "<C-next>")   'cq-down-quick)
 
 (global-set-key (kbd "C-M-.")      'cq-jump-to-function-or-variable)
 (global-set-key (kbd "C-x C-x")    'cq-exchange-point-and-mark)
@@ -368,11 +371,13 @@
   (recenter))
 
 (defun cq-slide-down ()
+  (interactive)
   (if (not (bolp))
       (forward-char)
     (if (eobp) (cq-ding) (forward-line 1))))
 
 (defun cq-slide-up ()
+  (interactive)
   (if (not (bolp))
       (backward-char)
     (if (bobp) (cq-ding) (forward-line -1))))
