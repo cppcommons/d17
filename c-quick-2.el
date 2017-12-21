@@ -41,6 +41,7 @@
 (global-set-key (kbd "C-M-e")      'cq-end-of-defun)
 (global-set-key (kbd "C-M-h")      'cq-mark-defun)
 (global-set-key (kbd "<C-tab>")    'cq-rotate-buffer-for-file)
+(global-set-key (kbd "<C-return>") 'cq-rotate-buffer-for-file)
 
 (global-set-key (kbd "<C-right>")  'cq-right-quick)
 (global-set-key (kbd "<C-left>")   'cq-left-quick)
