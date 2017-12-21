@@ -2,5 +2,7 @@
 	email = root@super-computer
 	name = root
 [core]
-	autocrlf = input
-	safecrlf = true
+	autoCRLF = false
+[credential]
+	useHttpPath = true
+	helper = manager
