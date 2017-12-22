@@ -7,7 +7,7 @@ set MSYS2_BITS=32
 set MSYS2_PKGS=diffutils,dos2unix,procps,psmisc,tmux-git,vim
 set MSYS2_PKGS=%MSYS2_PKGS%,  git,make,tar
 set MSYS2_PKGS=%MSYS2_PKGS%,  emacs,glib2,libhogweed
-::set MSYS2_PKGS=%MSYS2_PKGS%,  mingw-w64-i686-binutils
+set MSYS2_PKGS=%MSYS2_PKGS%,  mingw-w64-i686-binutils
 set MSYS2_PKGS=%MSYS2_PKGS%,  mingw-w64-i686-gcc
 set MSYS2_PKGS=%MSYS2_PKGS%,  mingw-w64-i686-gcc-objc
 set MSYS2_PKGS=%MSYS2_PKGS%,  mingw-w64-i686-cmake
@@ -17,7 +17,7 @@ set MSYS2_PKGS=%MSYS2_PKGS%,  mingw-w64-i686-qt5-static
 set MSYS2_PKGS=%MSYS2_PKGS%,  mingw-w64-i686-qt-creator
 set MSYS2_PKGS=%MSYS2_PKGS%,  mingw-w64-i686-ruby
 set MSYS2_PKGS=%MSYS2_PKGS%,  mingw-w64-i686-luajit-git
-set MSYS2_PKGS=%MSYS2_PKGS%,  mingw-w64-i686-lua51
+set MSYS2_PKGS=%MSYS2_PKGS%,  mingw-w64-i686-lua51-luarocks
 
 set MSYS2_USE_MINGW32=1
 ::set MSYS2_USE_MINGW64=1
